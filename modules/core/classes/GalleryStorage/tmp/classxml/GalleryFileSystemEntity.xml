@@ -1,0 +1,18 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryFileSystemEntity</class-name>
+<parent-class-name>GalleryChildEntity</parent-class-name>
+<schema>
+<schema-name>FileSystemEntity</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>0</schema-minor>
+</schema>
+<requires-id/>
+<member>
+<member-name>pathComponent</member-name>
+<member-type>STRING</member-type>
+<member-size>MEDIUM</member-size>
+<indexed/>
+<member-external-access>READ</member-external-access>
+</member>
+</class>

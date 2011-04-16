@@ -1,0 +1,114 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationMethodInterface_1_0.class');
+
+/**
+ * This NotificationMethod sends notification by email
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ */
+class NotificationMethodEmail extends NotificationMethodInterface_1_0 {
+
+    /**
+     * @see NotificationMethodInterface_1_0::getName
+     */
+    function getName() {
+	global $gallery;
+	return $gallery->i18n('E-mail');
+    }
+
+    /**
+     * @see NotificationMethodInterface_1_0::getDescription
+     */
+    function getDescription() {
+	global $gallery;
+	return $gallery->i18n('Send an email each time an event is triggered.');
+    }
+
+    /**
+     * @see NotificationMethodInterface_1_0::sendNotification
+     */
+    function sendNotification($userIds, $shortMessage, $longMessage) {
+	if (empty($userIds)) {
+	    return array(null, true);
+	}
+
+	/* Get list of user emails */
+	list ($ret, $emails, $errors) = $this->_getEmails($userIds);
+	if ($ret) {
+	    return array($ret, $errors);
+	}
+
+	/* Build email message */
+	list ($ret, $from) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.from');
+	if ($ret) {
+	    return $ret;
+	} else if (empty($from)) {
+	    $from = 'nobody';
+	}
+
+	$headers = 
+	    'From: ' . $from . "\r\n" . 
+	    'Bcc: ' . implode(',', $emails) . "\r\n" . 
+	    'MIME-Version: 1.0' . "\r\n" . 
+	    'X-Sender-IP: ' . $_SERVER['REMOTE_ADDR'] . "\r\n" . 
+	    'X-Mailer: PHP/' . phpversion() . "\r\n";
+	$subject = '[gallery] ' . $shortMessage;
+	$body = wordwrap($longMessage, 70);
+
+	global $gallery;
+	$galleryPlatform =& $gallery->getPlatform();
+	$success = $galleryPlatform->mail('', $subject, $body, $headers);
+	if (!$success) {
+	    $errors[] = GalleryCoreApi::error(ERROR_UNKNOWN, null, null, 'Could not send mail');
+	}
+
+	return array(null, $errors);
+    }
+
+    /**
+     * @param array $userIds user ids to send the notification to
+     * @return array array(
+     *      
+     */
+    function _getEmails($userIds) {
+	list ($ret, $users) = GalleryCoreApi::loadEntitiesById($userIds);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	$emails = $errors = array();
+	foreach ($users as $user) {
+	    if (!GalleryUtilities::isValidEmailString($user->getEmail())) {
+		$errors[$user->getId()] = GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+		continue;
+	    }
+
+	    $emails[] = $user->getEmail();
+	}
+
+	return array(null, $emails, $errors);
+    }
+}
+?>

@@ -1,0 +1,408 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationSystemInterface_1_0.class');
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHelper.class');
+
+/**
+ * This is an implementation of the notification system interface.
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ */
+class NotificationSystem extends NotificationSystemInterface_1_0 {
+
+    /**
+     * @see NotificationSystemInterface_1_0::registerMethod
+     * NOTE: change to just return $ret?
+     */
+    function registerMethod($methodClass) {
+	list ($ret, $status) = $this->unregisterMethod($methodClass, false);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$ret = GalleryCoreApi::addMapEntry('NotificationMethods', 
+	    array('methodClass' => $methodClass, 'enabled' => true));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::unregisterMethod
+     * NOTE: change to just return $ret?
+     */
+    function unregisterMethod($methodClass, $removeSettings=true) {
+	$match = array('methodClass' => $methodClass);
+
+	$ret = GalleryCoreApi::removeMapEntry('NotificationMethods', $match);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($removeSettings) {
+	    /* Change subscriptions from methodClass to defaultClass */
+	    list ($ret, $defaultClass) = GalleryCoreApi::newFactoryInstance(
+		'NotificationMethodInterface_1_0');
+	    if ($ret) {
+		return array($ret, null);
+	    } else if (!isset($defaultClass)) {
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
+	    $change = array('methodClass' => get_class($defaultClass));
+
+	    $ret = GalleryCoreApi::updateMapEntry('NotificationSubscriptions', $match, $change);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::registerEvent
+     * NOTE: change to just return $ret?
+     */
+    function registerEvent($eventClass) {
+	list ($ret, $status) = $this->unregisterEvent($eventClass, false);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$ret = GalleryCoreApi::addMapEntry('NotificationEvents', 
+	    array('eventClass' => $eventClass, 'enabled' => true));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::isEventEnabled
+     */
+    function isEventEnabled($eventClass) {
+	$select = array('enabled');
+	$match = array('eventClass' => $eventClass);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+		'NotificationEvents', 
+		$select, $match);
+	if ($ret) {
+	    return array($ret, null);
+	} else if ($searchResults->resultCount() < 1) {
+	    /*
+	     * NOTE: Should this return an error? If nothing was returned then 
+	     * the event isn't even registered. We might want to make a way for the code to see if
+	     * an event is registered. isEventRegistered() perhaps?
+	     */
+	    return array(null, false);
+	}
+
+	$result = $searchResults->nextResult();
+	return array(null, (bool)$result[0]);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::unregisterEvent
+     * NOTE: change to just return $ret?
+     */
+    function unregisterEvent($eventClass, $removeSettings=true) {
+	$match = array('eventClass' => $eventClass);
+
+	$ret = GalleryCoreApi::removeMapEntry('NotificationEvents', $match);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($removeSettings) {
+	    $ret = GalleryCoreApi::removeMapEntry('NotificationSubscriptions', $match);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::subscribeEvent
+     * NOTE: change to just return $ret?
+     */
+    function subscribeEvent($eventClass, $userId, $filter, $methodClass = '') {
+	list ($ret, $status) = $this->unsubscribeEvent($eventClass, $userId, $filter);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$ret = GalleryCoreApi::addMapEntry(
+	    'NotificationSubscriptions',
+	    array('eventClass' => $eventClass,
+		  'userId' => $userId,
+		  'filter' => $filter,
+		  'methodClass' => $methodClass));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::isSubscribed
+     */
+    function isSubscribed($eventClass, $userId, $item) {
+	list ($ret, $filter) = NotificationHelper::getFilter($item);
+	if ($ret) {
+	    return array($ret, null);
+	} else if (empty($filter)) {
+	    return array(null, false);
+	}
+
+	$select = array('methodClass');
+	$match = array('eventClass' => $eventClass, 'userId' => $userId, 'filter' => $filter);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+		'NotificationSubscriptions', $select, $match);
+	if ($ret) {
+	    return array($ret, null);
+	} else if ($searchResults->resultCount() < 1) {
+	    return array(null, false);
+	}
+
+	$result = $searchResults->nextResult();
+	return array(null, $result[0]);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::getSubscribers
+     */
+    function getSubscribers($eventClass, $filter) {
+	$select = array('userId', 'methodClass');
+	$match = array('eventClass' => $eventClass, 'filter' => $filter);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+		'NotificationSubscriptions', $select, $match);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$subscribers = array();
+	while ($result = $searchResults->nextResult()) {
+	    $subscribers[$result[0]] = $result[1];
+	}
+
+	return array(null, $subscribers);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::getSubscriptions
+     */
+    function getSubscriptions($events, $options=array()) {
+	$subscriptions = array();
+
+	/* Establish the search criteria for what subscriptions to get */
+	$select = array('methodClass', 'filter');
+	if (!empty($options['userId'])) {
+	    $match['userId'] = $options['userId'];
+	}
+	/* If we were given an item or itemId, get a filter */
+	if (!empty($options['item'])) {
+	    $item =& $options['item'];
+	} else if (!empty($options['itemId'])) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($options['itemId']);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	if (!empty($item)) {
+	    list ($ret, $match['filter']) = NotificationHelper::getFilter($item);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	/* Loop through each instance of an event we were handed and get subscriptions it */
+	foreach ($events as $eventClass) {
+	    $match['eventClass'] = $eventClass;
+
+	    /* Search for subscriptions that match our criteria */
+	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+		    'NotificationSubscriptions', $select, $match);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    /* Return each result as an associated array */
+	    while ($row = $searchResults->nextResult()) {
+		list ($ret, $combined) = NotificationHelper::arrayCombine($select, $row);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$subscriptions[$eventClass][$row[1]] = $combined;
+	    }
+	}
+
+	return array(null, $subscriptions);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::unsubscribeEvent
+     * NOTE: change to just return $ret?
+     */
+    function unsubscribeEvent($eventClass, $userId, $filter) {
+	$ret = GalleryCoreApi::removeMapEntry('NotificationSubscriptions',
+		array('eventClass' => $eventClass, 'userId' => $userId, 'filter' => $filter));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationSystemInterface_1_0::postEvent
+     * NOTE: change to just return $ret?
+     */
+    function postEvent($eventClass, $eventInformation) {
+	global $gallery;
+
+	/* Make sure the event is enabled */
+	list ($ret, $eventEnabled) = $this->isEventEnabled($eventClass);
+	if ($ret) {
+	    return array($ret, null);
+	} else if ($eventEnabled == false) {
+	    return array(null, false);
+	}
+
+	/* Get item object */
+	if (!empty($eventInformation['item'])) {
+	    $item =& $eventInformation['item'];
+	} else if (!empty($eventInformation['itemId'])) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($eventInformation['itemId']);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	if (empty($item)) {
+	    return array(null, false);
+	}
+
+	/* Get the subscription filter */
+	list ($ret, $filter) = NotificationHelper::getFilter($item);
+	if ($ret) {
+	    return array($ret, null);
+	} else if (empty($filter)) {
+	    return array(null, false);
+	}
+
+	/* Get all subscribers to the event */
+	list ($ret, $subscribers) = $this->getSubscribers($eventClass, $filter);
+	if ($ret) {
+	    return array($ret, null);
+	} else if (empty($subscribers)) {
+	    return array(null, false);
+	}
+
+	list ($ret, $eventInstance) = GalleryCoreApi::newFactoryInstance(
+	    'NotificationEventInterface_1_0', $eventClass);
+	if ($ret) {
+	    return array($ret, null);
+	} else if (!isset($eventInstance)) {
+	    return array(null, false);
+	}
+
+	/* Allow the calling event to check the list of subscribers for proper permissions */
+	list ($ret, $subscribers) = $eventInstance->postFilter($subscribers, $eventInformation);
+	if (empty($subscribers)) {
+	    return array(null, false);
+	}
+
+	/* Get method class names */
+	list ($ret, $methods) = NotificationHelper::getMethods(NOTIFICATION_RETURN_BASIC);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$translator =& $gallery->getTranslator();
+	$translationDomain = $eventInstance->getTranslationDomain();
+
+	/* Get and translate the event messages */
+	$shortMessage = $eventInstance->getShortMessage();
+	if (empty($eventInformation['short'])) {
+	    $translationData = $shortMessage;
+	} else {
+	    if (!is_array($eventInformation['short'])) {
+		$eventInformation['short'] = array($eventInformation['short']);
+	    }
+	    $translationData = array('text' => $shortMessage, 'args' => $eventInformation['short']);
+	}
+	list ($ret, $shortMessage) = $translator->translateDomain(
+	    $translationDomain, $translationData);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$longMessage = $eventInstance->getLongMessage();
+	if (empty($eventInformation['long'])) {
+	    $translationData = $longMessage;
+	} else {
+	    if (!is_array($eventInformation['long'])) {
+		$eventInformation['long'] = array($eventInformation['long']);
+	    }
+	    $translationData = array('text' => $longMessage, 'args' => $eventInformation['long']);
+	}
+	list ($ret, $longMessage) = $translator->translateDomain(
+	    $translationDomain, $translationData);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* Call each method notification */
+	foreach ($methods as $methodClass) {
+	    list ($ret, $methodInstance) = GalleryCoreApi::newFactoryInstance(
+		'NotificationMethodInterface_1_0', $methodClass);
+	    if ($ret) {
+		return array($ret, null);
+	    } else if (!isset($methodInstance)) {
+		continue;
+	    }
+
+	    $methodSubscribers = array_keys($subscribers, $methodClass);
+
+	    list ($ret, $errors) = $methodInstance->sendNotification(
+		$methodSubscribers, $shortMessage, $longMessage);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    /*
+	     * TODO: $error handling
+	     * Log error?
+	     * Disable method?
+	     * What about events with that method class set?
+	     */
+	}
+
+	return array(null, true);
+    }
+}
+?>

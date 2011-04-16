@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>PluginParameterMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>3</schema-minor>
+   </schema>
+   <column>
+      <column-name>pluginType</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>pluginId</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>itemId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>parameterName</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>parameterValue</column-name>
+      <column-type>TEXT</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="allowed"/>
+   </column>
+   <key>
+     <column-name>pluginType</column-name>
+     <column-name>pluginId</column-name>
+     <column-name>itemId</column-name>
+     <column-name>parameterName</column-name>
+   </key>
+   <index>
+     <column-name>pluginType</column-name>
+   </index>
+   <index>
+     <column-name>pluginType</column-name>
+     <column-name>pluginId</column-name>
+     <column-name>itemId</column-name>
+   </index>
+</table>

@@ -1,0 +1,73 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * This is an interface for alternative notification methods for the notification module.
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ * @abstract
+ */
+class NotificationMethodInterface_1_0 {
+
+    /**
+     * Return the translation domain to use. (eg. pluginType . 's_' . pluginId)
+     *
+     * @return string Translation Domain
+     */
+    function getTranslationDomain() {
+	return 'modules_notification';
+    }
+
+    /**
+     * Return the name of the method.
+     *
+     * @return string Name of method
+     */
+    function getName() {
+	global $gallery;
+	return $gallery->i18n('Unimplemented');
+    }
+
+    /**
+     * Return the description of the method.
+     *
+     * @return string Description of method
+     */
+    function getDescription() {
+	global $gallery;
+	return $gallery->i18n('Unimplemented');
+    }
+
+    /**
+     * Send out a notification to the users.
+     *
+     * @param array $userIds array(userId, ...)
+     * @param string $shortMessage short notification message
+     * @param string $longMessage long notification message
+     * @return array array(object GalleryStatus a status code,
+     *                     array('userId' => object GalleryStatus a status code, ...))
+     */
+    function sendNotification($userIds, $shortMessage, $longMessage) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+}
+?>

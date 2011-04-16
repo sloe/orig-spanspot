@@ -1,0 +1,7 @@
+# $Revision: 18176 $
+# File crc32 crc32(crlf) size size(crlf)  or  R File
+modules/newitems/NewItemsSiteAdmin.inc	1010352180	1949956621	4112	4246
+modules/newitems/classes/NewItemsHelper.class	854448050	3226861123	2621	2717
+modules/newitems/classes/NewItemsSortOrder.class	271351345	1814641850	2267	2338
+modules/newitems/module.inc	3528862520	1555985580	3720	3848
+modules/newitems/templates/NewItemsSiteAdmin.tpl	1420190427	3608297387	2880	2965

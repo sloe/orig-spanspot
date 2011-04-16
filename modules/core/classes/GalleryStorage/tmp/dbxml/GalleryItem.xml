@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>Item</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>2</schema-minor>
+   </schema>
+   <column>
+      <column-name>id</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>canContainChildren</column-name>
+      <column-type>BOOLEAN</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>description</column-name>
+      <column-type>TEXT</column-type>
+      <column-size>SMALL</column-size>
+   </column>
+   <column>
+      <column-name>keywords</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>ownerId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>renderer</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>summary</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>title</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>viewedSinceTimestamp</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>originationTimestamp</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <key primary="true">
+     <column-name>id</column-name>
+   </key>
+   <index>
+     <column-name>keywords</column-name>
+   </index>
+   <index>
+     <column-name>ownerId</column-name>
+   </index>
+   <index>
+     <column-name>summary</column-name>
+   </index>
+   <index>
+     <column-name>title</column-name>
+   </index>
+</table>

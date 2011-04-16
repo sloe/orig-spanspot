@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>User</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>2</schema-minor>
+   </schema>
+   <column>
+      <column-name>id</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>userName</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>fullName</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>hashedPassword</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>email</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>language</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>locked</column-name>
+      <column-type>BOOLEAN</column-type>
+      <column-size>MEDIUM</column-size>
+      <default>0</default>
+   </column>
+   <key primary="true">
+     <column-name>id</column-name>
+   </key>
+   <key>
+     <column-name>userName</column-name>
+   </key>
+</table>

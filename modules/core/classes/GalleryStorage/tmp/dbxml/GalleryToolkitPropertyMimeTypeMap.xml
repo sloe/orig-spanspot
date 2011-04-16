@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>TkPropertyMimeTypeMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>0</schema-minor>
+   </schema>
+   <column>
+      <column-name>propertyName</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>toolkitId</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>mimeType</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <index>
+     <column-name>propertyName</column-name>
+   </index>
+   <index>
+     <column-name>mimeType</column-name>
+   </index>
+</table>

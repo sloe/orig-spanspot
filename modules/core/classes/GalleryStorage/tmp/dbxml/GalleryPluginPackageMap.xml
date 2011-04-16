@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>PluginPackageMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>1</schema-minor>
+   </schema>
+   <column>
+      <column-name>pluginType</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>pluginId</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>packageName</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>packageVersion</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>packageBuild</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>locked</column-name>
+      <column-type>BOOLEAN</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <index>
+     <column-name>pluginType</column-name>
+   </index>
+</table>

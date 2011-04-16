@@ -1,0 +1,277 @@
+## mysql
+# NotificationEvents
+CREATE TABLE DB_TABLE_PREFIXNotificationEvents(
+ DB_COLUMN_PREFIXeventClass varchar(128),
+ DB_COLUMN_PREFIXenabled int(1),
+ UNIQUE (DB_COLUMN_PREFIXeventClass),
+ INDEX DB_TABLE_PREFIXNotificationEvents_43748(DB_COLUMN_PREFIXenabled)
+) DB_TABLE_TYPE
+/*!40100 DEFAULT CHARACTER SET utf8 */;
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationEvents', 1, 0);
+
+# NotificationMethods
+CREATE TABLE DB_TABLE_PREFIXNotificationMethods(
+ DB_COLUMN_PREFIXmethodClass varchar(128),
+ DB_COLUMN_PREFIXenabled int(1),
+ UNIQUE (DB_COLUMN_PREFIXmethodClass),
+ INDEX DB_TABLE_PREFIXNotificationMethods_43748(DB_COLUMN_PREFIXenabled)
+) DB_TABLE_TYPE
+/*!40100 DEFAULT CHARACTER SET utf8 */;
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationMethods', 1, 0);
+
+# NotificationSubscriptions
+CREATE TABLE DB_TABLE_PREFIXNotificationSubscriptions(
+ DB_COLUMN_PREFIXeventClass varchar(128),
+ DB_COLUMN_PREFIXfilter varchar(128),
+ DB_COLUMN_PREFIXuserId int(11),
+ DB_COLUMN_PREFIXmethodClass varchar(128),
+ INDEX DB_TABLE_PREFIXNotificationSubscriptions_77510(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXuserId),
+ INDEX DB_TABLE_PREFIXNotificationSubscriptions_28599(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXfilter),
+ INDEX DB_TABLE_PREFIXNotificationSubscriptions_93078(DB_COLUMN_PREFIXmethodClass)
+) DB_TABLE_TYPE
+/*!40100 DEFAULT CHARACTER SET utf8 */;
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationSubscriptions', 1, 0);
+
+## postgres
+# NotificationEvents
+CREATE TABLE DB_TABLE_PREFIXNotificationEvents(
+ DB_COLUMN_PREFIXeventClass VARCHAR(128),
+ DB_COLUMN_PREFIXenabled SMALLINT
+);
+
+CREATE UNIQUE INDEX DB_TABLE_PREFIXNotificationEvents_49963 ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXeventClass);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationEvents_43748 ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXenabled);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationEvents', 1, 0);
+
+# NotificationMethods
+CREATE TABLE DB_TABLE_PREFIXNotificationMethods(
+ DB_COLUMN_PREFIXmethodClass VARCHAR(128),
+ DB_COLUMN_PREFIXenabled SMALLINT
+);
+
+CREATE UNIQUE INDEX DB_TABLE_PREFIXNotificationMethods_93078 ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXmethodClass);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationMethods_43748 ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXenabled);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationMethods', 1, 0);
+
+# NotificationSubscriptions
+CREATE TABLE DB_TABLE_PREFIXNotificationSubscriptions(
+ DB_COLUMN_PREFIXeventClass VARCHAR(128),
+ DB_COLUMN_PREFIXfilter VARCHAR(128),
+ DB_COLUMN_PREFIXuserId INTEGER,
+ DB_COLUMN_PREFIXmethodClass VARCHAR(128)
+);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_77510 ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXuserId);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_28599 ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXfilter);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_93078 ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXmethodClass);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationSubscriptions', 1, 0);
+
+## oracle
+# NotificationEvents
+CREATE TABLE DB_TABLE_PREFIXNotificationEvents(
+ DB_COLUMN_PREFIXeventClass VARCHAR2(128),
+ DB_COLUMN_PREFIXenabled NUMBER(1)
+);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationEvents_43748
+   ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXenabled);
+
+ALTER TABLE DB_TABLE_PREFIXNotificationEvents
+ ADD UNIQUE (DB_COLUMN_PREFIXeventClass)
+;
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationEvents', 1, 0);
+
+# NotificationMethods
+CREATE TABLE DB_TABLE_PREFIXNotificationMethods(
+ DB_COLUMN_PREFIXmethodClass VARCHAR2(128),
+ DB_COLUMN_PREFIXenabled NUMBER(1)
+);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationMethods_43748
+   ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXenabled);
+
+ALTER TABLE DB_TABLE_PREFIXNotificationMethods
+ ADD UNIQUE (DB_COLUMN_PREFIXmethodClass)
+;
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationMethods', 1, 0);
+
+# NotificationSubscriptions
+CREATE TABLE DB_TABLE_PREFIXNotificationSubscriptions(
+ DB_COLUMN_PREFIXeventClass VARCHAR2(128),
+ DB_COLUMN_PREFIXfilter VARCHAR2(128),
+ DB_COLUMN_PREFIXuserId INTEGER,
+ DB_COLUMN_PREFIXmethodClass VARCHAR2(128)
+);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_77510
+   ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXuserId);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_28599
+   ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXfilter);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_93078
+   ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXmethodClass);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationSubscriptions', 1, 0);
+
+## db2
+# NotificationEvents
+CREATE TABLE DB_TABLE_PREFIXNotificationEvents(
+ DB_COLUMN_PREFIXeventClass VARCHAR(128),
+ DB_COLUMN_PREFIXenabled SMALLINT
+);
+
+CREATE UNIQUE INDEX DB_TABLE_PREFIXNotif6b_49963  
+ ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXeventClass);
+
+CREATE INDEX DB_TABLE_PREFIXNotif6b_43748
+   ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXenabled);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationEvents', 1, 0);
+
+# NotificationMethods
+CREATE TABLE DB_TABLE_PREFIXNotificationMethods(
+ DB_COLUMN_PREFIXmethodClass VARCHAR(128),
+ DB_COLUMN_PREFIXenabled SMALLINT
+);
+
+CREATE UNIQUE INDEX DB_TABLE_PREFIXNotifa3_93078  
+ ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXmethodClass);
+
+CREATE INDEX DB_TABLE_PREFIXNotifa3_43748
+   ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXenabled);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationMethods', 1, 0);
+
+# NotificationSubscriptions
+CREATE TABLE DB_TABLE_PREFIXNotificationSubscriptions(
+ DB_COLUMN_PREFIXeventClass VARCHAR(128),
+ DB_COLUMN_PREFIXfilter VARCHAR(128),
+ DB_COLUMN_PREFIXuserId INTEGER,
+ DB_COLUMN_PREFIXmethodClass VARCHAR(128)
+);
+
+CREATE INDEX DB_TABLE_PREFIXNotifc8_77510
+   ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXuserId);
+
+CREATE INDEX DB_TABLE_PREFIXNotifc8_28599
+   ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXfilter);
+
+CREATE INDEX DB_TABLE_PREFIXNotifc8_93078
+   ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXmethodClass);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationSubscriptions', 1, 0);
+
+## mssql
+# NotificationEvents
+CREATE TABLE DB_TABLE_PREFIXNotificationEvents(
+ DB_COLUMN_PREFIXeventClass NVARCHAR(128) NULL,
+ DB_COLUMN_PREFIXenabled BIT NULL
+);
+
+CREATE UNIQUE INDEX DB_TABLE_PREFIXNotificationEvents_49963 ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXeventClass);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationEvents_43748 ON DB_TABLE_PREFIXNotificationEvents(DB_COLUMN_PREFIXenabled);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationEvents', 1, 0);
+
+# NotificationMethods
+CREATE TABLE DB_TABLE_PREFIXNotificationMethods(
+ DB_COLUMN_PREFIXmethodClass NVARCHAR(128) NULL,
+ DB_COLUMN_PREFIXenabled BIT NULL
+);
+
+CREATE UNIQUE INDEX DB_TABLE_PREFIXNotificationMethods_93078 ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXmethodClass);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationMethods_43748 ON DB_TABLE_PREFIXNotificationMethods(DB_COLUMN_PREFIXenabled);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationMethods', 1, 0);
+
+# NotificationSubscriptions
+CREATE TABLE DB_TABLE_PREFIXNotificationSubscriptions(
+ DB_COLUMN_PREFIXeventClass NVARCHAR(128) NULL,
+ DB_COLUMN_PREFIXfilter NVARCHAR(128) NULL,
+ DB_COLUMN_PREFIXuserId INT NULL,
+ DB_COLUMN_PREFIXmethodClass NVARCHAR(128) NULL
+);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_77510 ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXuserId);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_28599 ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXeventClass, DB_COLUMN_PREFIXfilter);
+
+CREATE INDEX DB_TABLE_PREFIXNotificationSubscriptions_93078 ON DB_TABLE_PREFIXNotificationSubscriptions(DB_COLUMN_PREFIXmethodClass);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('NotificationSubscriptions', 1, 0);
+

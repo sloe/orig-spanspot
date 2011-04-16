@@ -1,0 +1,334 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * Helper functions for the notification module
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ */
+
+/**
+ * Flag for getMethods/getEvents to specify only 'basic' return information
+ */
+define('NOTIFICATION_RETURN_BASIC', 'basic');
+
+/**
+ * Flag for getMethods/getEvents to specify 'full' return information
+ */
+define('NOTIFICATION_RETURN_FULL', 'full');
+
+/**
+ * Helper functions for the notification module
+ * @static
+ */
+class NotificationHelper {
+
+    /**
+     * @param boolean $adminCheck Should we see if the user is an administrator as well
+     * @return array object GalleryStatus a status code
+     *               integer UserId
+     */
+    function getUserIdCheck($adminCheck=false) {
+	if ($adminCheck) {
+	    $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	} else {
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	    if ($ret) {
+		return array($ret, null);
+	    } else if ($isAnonymous) {
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	    }
+	}
+
+	global $gallery;
+	$userId = $gallery->getActiveUserId();
+
+	return array(null, $userId);
+    }
+
+    /**
+     * Return methods in the database.
+     *
+     * @param string $return indicate amount of return information 'basic'|'full'
+     * @param string $enabledOnly return only enabled methods
+     *               If false then 'enabled' is added to return
+     * @return array object GalleryStatus a status code
+     *               array of methods
+     *               if 'minimal' array(methodClass[ => enabled], ...)
+     *               if 'full' array(methodClass => array('methodClass' => methodClass,
+     *                                                   'name' => methodName,
+     *                                                   'description' => methodDescription, 
+     *                                                   ['enabled' => enabled]);
+     */
+    function getMethods($return=NOTIFICATION_RETURN_FULL, $enabledOnly=true) {
+	global $gallery;
+
+	/* Input Sanitation Checks */
+	$enabledOnly = (bool)$enabledOnly;
+	if (!in_array($return, array(NOTIFICATION_RETURN_BASIC, NOTIFICATION_RETURN_FULL))) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	}
+
+	$map = 'NotificationMethods';
+	$select = array('methodClass');
+	$match = ($enabledOnly) ? array('enabled' => true) : array();
+	if (!$enabledOnly) {
+	    $select[] = 'enabled';
+	}
+
+	list ($ret, $searchResult) = GalleryCoreApi::getMapEntry($map, $select, $match);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$methods = array();
+	switch ($return) {
+	case NOTIFICATION_RETURN_BASIC:
+	    if ($enabledOnly) {
+		while ($row = $searchResult->nextResult()) {
+		    $methods[] = $row[0];
+		}
+	    } else {
+		while ($row = $searchResult->nextResult()) {
+		    $methods[$row[0]] = $row[1];
+		}
+	    }
+	    break;
+	case NOTIFICATION_RETURN_FULL:
+	default:
+	    $translator =& $gallery->getTranslator();
+	    while ($row = $searchResult->nextResult()) {
+		unset($methodInstance);
+		list ($ret, $methodInstance) = GalleryCoreApi::newFactoryInstance(
+		    'NotificationMethodInterface_1_0', $row[0]);
+		if ($ret) {
+		    return array($ret, null);
+		} else if (!isset($methodInstance)) {
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		}
+
+		$methodDomain = $methodInstance->getTranslationDomain();
+		list ($ret, $methodName) = $translator->translateDomain(
+		    $methodDomain, $methodInstance->getName());
+		if ($ret) {
+		    return array($ret, null);
+		}
+		list ($ret, $methodDescription) = $translator->translateDomain(
+		    $methodDomain, $methodInstance->getDescription());
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		$methods[$row[0]] = array(
+		    'methodClass' => $row[0], 
+		    'methodInstance' =>& $methodInstance, 
+		    'methodName' => $methodName, 
+		    'methodDescription' => $methodDescription);
+		if (!$enabledOnly) {
+		    $methods[$row[0]]['enabled'] = $row[1];
+		}
+	    }
+	    break;
+	}
+
+	return array(null, $methods);
+    }
+
+    /**
+     * Return events in the database.
+     *
+     * @param string $return indicate amount of return information 'basic'|'full'
+     * @param string $enabledOnly return only enabled events
+     *               If false then 'enabled' is added to return
+     * @return array object GalleryStatus a status code
+     *               array of events
+     *               if 'minimal' array(eventClass[ => enabled], ...)
+     *               if 'full' array(eventClass => array('eventClass' => eventClass,
+     *                                                   'name' => eventName,
+     *                                                   'description' => eventDescription, 
+     *                                                   ['enabled' => enabled]);
+     */
+    function getEvents($return=NOTIFICATION_RETURN_FULL, $enabledOnly=true) {
+	global $gallery;
+
+	/* Input Sanitation Checks */
+	$enabledOnly = (bool)$enabledOnly;
+	if (!in_array($return, array(NOTIFICATION_RETURN_BASIC, NOTIFICATION_RETURN_FULL))) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	}
+
+	$map = 'NotificationEvents';
+	$select = array('eventClass');
+	$match = ($enabledOnly) ? array('enabled' => true) : array();
+	if (!$enabledOnly) {
+	    $select[] = 'enabled';
+	}
+
+	list ($ret, $searchResult) = GalleryCoreApi::getMapEntry($map, $select, $match);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$events = array();
+	switch ($return) {
+	case NOTIFICATION_RETURN_BASIC:
+	    if ($enabledOnly) {
+		while ($row = $searchResult->nextResult()) {
+		    $events[] = $row[0];
+		}
+	    } else {
+		while ($row = $searchResult->nextResult()) {
+		    $events[$row[0]] = $row[1];
+		}
+	    }
+	    break;
+	case NOTIFICATION_RETURN_FULL:
+	default:
+	    $translator =& $gallery->getTranslator();
+	    while ($row = $searchResult->nextResult()) {
+		unset($eventInstance);
+		list ($ret, $eventInstance) = GalleryCoreApi::newFactoryInstance(
+		    'NotificationEventInterface_1_0', $row[0]);
+		if ($ret) {
+		    return array($ret, null);
+		} else if (!isset($eventInstance)) {
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		}
+
+		$eventDomain = $eventInstance->getTranslationDomain();
+
+		list ($ret, $eventName) = $translator->translateDomain(
+		    $eventDomain, $eventInstance->getName());
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		list ($ret, $eventDescription) = $translator->translateDomain(
+		    $eventDomain, $eventInstance->getDescription());
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		$events[$row[0]] = array(
+		    'eventClass' => $row[0], 
+		    'eventInstance' =>& $eventInstance, 
+		    'eventName' => $eventName, 
+		    'eventDescription' => $eventDescription);
+		if (!$enabledOnly) {
+		    $events[$row[0]]['enabled'] = $row[1];
+		}
+	    }
+	    break;
+	}
+
+	return array(null, $events);
+    }
+
+    /**
+     * This method returns an array of filters that should be used to determine if a user is 
+     * subscribed to a posted event.
+     *
+     * @param object GalleryEntity $item (sub)object
+     * @return array array(object GalleryStatus a status code,
+     *                     array filter)
+     */
+    function getFilter($item=null) {
+	/* 'All' subscriptions are always in the filter */
+	$filter = array('all');
+
+	if (empty($item)) {
+	    return array(null, $filter);
+	}
+
+	/* Add the owner of the item to the filter */
+	if (GalleryUtilities::isA($item, 'GalleryItem')) {
+	    $filter[] = 'o=' . $item->getOwnerId();
+	}
+
+	/* Add the item itself to the filter */
+	$itemId = $item->getId();
+	$filter[] = 'i=' . $itemId;
+
+	/* Get all of the parent IDs and add them to the filter */
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	foreach ($parentSequence as $parentId) {
+	    if ($parentId == $itemId) {
+		continue;
+	    }
+	    $filter[] = 'i=' . $parentId;
+	}
+
+	return array(null, $filter);
+    }
+
+    /**
+     * Combine two arrays using the first as keys and the second as values.
+     *
+     * @param array $keys keys
+     * @param array $values values
+     * @return array array(object GalleryStatus a status code,
+     *                     array keys => values)
+     */
+    function arrayCombine($keys, $values) {
+	if (!is_array($keys)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null, 
+		'array_combine() expects parameter 1 to be array, ' . gettype($keys) . ' given'), 
+		null);
+	}
+
+	if (!is_array($values)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null, 
+		'array_combine() expects parameter 2 to be array, ' . gettype($values) . ' given'), 
+		null);
+	}
+
+	$keyCount = count($keys);
+	$valueCount = count($values);
+	if ($keyCount !== $valueCount) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null, 
+		'array_combine() Both parameters should have equal number of elements'), 
+		null);
+	}
+
+	if ($keyCount === 0 || $valueCount === 0) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null, 
+		'array_combine() Both parameters should have number of elements at least 0'), 
+		null);
+	}
+
+	$keys = array_values($keys);
+	$values  = array_values($values);
+
+	$combined = array();
+	for ($i = 0; $i < $keyCount; $i++) {
+	    $combined[$keys[$i]] = $values[$i];
+	}
+
+	return array(null, $combined);
+    }
+}
+?>

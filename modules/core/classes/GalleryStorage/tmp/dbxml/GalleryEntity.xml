@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>Entity</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>2</schema-minor>
+   </schema>
+   <column>
+      <column-name>id</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>creationTimestamp</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>isLinkable</column-name>
+      <column-type>BOOLEAN</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>linkId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>modificationTimestamp</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>serialNumber</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>entityType</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>onLoadHandlers</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <key primary="true">
+     <column-name>id</column-name>
+   </key>
+   <index>
+     <column-name>creationTimestamp</column-name>
+   </index>
+   <index>
+     <column-name>isLinkable</column-name>
+   </index>
+   <index>
+     <column-name>linkId</column-name>
+   </index>
+   <index>
+     <column-name>modificationTimestamp</column-name>
+   </index>
+   <index>
+     <column-name>serialNumber</column-name>
+   </index>
+</table>

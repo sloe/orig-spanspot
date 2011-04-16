@@ -1,0 +1,233 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRenderer.class');
+
+/**
+ * A renderer for Flash Video.
+ * @package FlashVideo
+ * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision: 15953 $
+ */
+class FlashVideoRenderer extends GalleryRenderer {
+
+    /**
+     * @see GalleryRenderer::canBeViewedInline
+     */
+    function canBeViewedInline($item) {
+  return GalleryUtilities::isA($item, 'GalleryMovieItem')
+      && ($item->getMimeType() == 'video/x-flv' || $item->getMimeType() == 'video/mp4');
+    }
+
+    /**
+     * @see GalleryRenderer::render
+     */
+    function render($format, $entity, $item, $params) {
+  global $gallery;
+  $fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
+
+  if ($format != 'HTML' || ($entity->getMimeType() != 'video/x-flv' && $entity->getMimeType() != 'video/mp4')) {
+      return null;
+  }
+
+  list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'flashvideo');
+  if ($ret) {
+      return null;
+  }
+
+  $urlGenerator =& $gallery->getUrlGenerator();
+  $src = $urlGenerator->generateUrl(
+    array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
+          'serialNumber' => $entity->getSerialNumber()),
+    array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
+  list ($width, $height, $title) =
+    array($entity->getWidth(), $entity->getHeight(), $item->getTitle());
+  if(	$entity->getWidth() == 0 && $entity->getHeight() == 0){
+    $width = 480;
+    $height = 160;
+  }
+  GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
+  $title = smarty_modifier_markup($title, 'strip');
+
+  /* Default player: G2flv.swf */
+  /* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
+  $SWFObjectUrl = $urlGenerator->generateUrl(
+    array('href' => 'modules/flashvideo/lib/swfobject.js'),
+    array('forceFullUrl' => true));
+  $expressInstallUrl = $urlGenerator->generateUrl(
+    array('href' => 'modules/flashvideo/lib/expressinstall.swf'),
+    array('forceFullUrl' => true));
+  $playerUrl = $urlGenerator->generateUrl(
+    array('href' => 'modules/flashvideo/lib/E2.swf'),
+    array('forceFullUrl' => true));
+
+    if ($entity->parentId == 40043) {
+        $flashVars = 'xmlUrl='.$urlGenerator->generateUrl(array('href'=>'mediaRss.php'), array('forceFullUrl'=>true))
+        .'&g2_itemId='.$entity->parentId.'&Width='.$width.'&Height='.$height.'&title='.urlencode($title).'&startId='.$entity->getId();
+    } else {
+        $flashVars = 'flvUrl='.urlencode($src).'&Width='.$width.'&Height='.$height.'&title='.urlencode($title);
+    }
+
+  $extraAttr = '';
+  if($params['allowDownload']){
+      $flashVars .= '&allowDownload=true';
+  }
+  if($params['share']){
+      $flashVars .= '&share=true';
+    /* To allow for sharing we must also pass the playerUrl */
+      $flashVars .= '&swfUrl=' . urlencode($playerUrl);
+  }
+  if(!$params['allowFullscreen']){
+      $flashVars .= '&allowFullscreen=false';
+  }
+  if($params['autoStart']){
+      $flashVars .= '&autoStart=true';
+  }
+
+  $itemId = $item->getId();
+  list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
+  if (!$ret && !empty($thumbnail)) {
+      $thumbUrl = $urlGenerator->generateUrl(
+    array('view' => 'core.DownloadItem', 'itemId' => $thumbnail[$itemId]->getId(),
+          'serialNumber' => $thumbnail[$itemId]->getSerialNumber()),
+    array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
+      $flashVars .= '&thumbUrl=' . urlencode($thumbUrl);
+  }
+  if(isset($params['color1'])){
+      $flashVars .= '&color1=0x' . $params['color1'];
+  }
+  if(isset($params['color2'])){
+      $flashVars .= '&color2=0x' . $params['color2'];
+  }
+  if(isset($params['color4'])){
+      $flashVars .= '&color4=0x' . $params['color4'];
+  }
+  $flashVars .= '&htmlDiv=flashvideo';
+  list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'flashvideo');
+  if ($ret) {
+      return null;
+  }
+  foreach (array('langDownload' => $module->translate('Download'),
+           'langFullscreen' => $module->translate('Fullscreen'),
+         'langNormal' => $module->translate('Normal'),
+               'langPlay' => $module->translate('Play'),
+               'langPause' => $module->translate('Pause'),
+               'langForward' => $module->translate('Forward'),
+               'langRewind' => $module->translate('Rewind'),
+               'langMute' => $module->translate('Mute'),
+               'langUnmute' => $module->translate('Unmute'),
+               'langShare' => $module->translate('Share'),
+        ) as $key => $value) {
+      $flashVars .= '&' . $key . '=' . urlencode($value);
+  }
+
+  /*
+   * To use FlowPlayer ( http://flowplayer.sourceforge.net )
+   * place FlowPlayer.swf in the flashvideo/lib directory and uncomment the lines below:
+   */
+  /*
+  $playerUrl = $urlGenerator->generateUrl(
+        array('href' => 'modules/flashvideo/lib/FlowPlayer.swf'),
+        array('forceFullUrl' => true));
+    $flashVars = sprintf('config={videoFile: \'%s\'}&autoPlay=true&loop=false',
+        urlencode($src));
+    $extraAttr = ' wmode="transparent"';
+  */
+
+  /*
+   * To use FLVPlayer ( http://www.peldi.com/fmswiki/index.php?title=FLVPlayer )
+   * get this version of the player: http://gallery.menalto.com/files/.zip
+   * unzip in the flashvideo/lib directory and uncomment the lines below:
+   */
+ /* 
+  $playerUrl = $urlGenerator->generateUrl(
+    array('href' => 'modules/flashvideo/lib/FlvPlayer-new.swf'),
+    array('forceFullUrl' => true));
+  $skinUrl = $urlGenerator->generateUrl(
+    array('href' => 'modules/flashvideo/lib/skin'), array('forceFullUrl' => true));
+  $flashVars = sprintf('flvpVideoSource=%s&autoPlay=true&autoRewind=false',
+           urlencode($src));
+  $flashVars .= '&flvpWidth='.$width.'&flvpHeight='.$height;
+  */
+$playerUrl = $urlGenerator->generateUrl(
+array('href' => 'modules/flashvideo/moyea/mwplayer.swf'),
+array('forceFullUrl' => true));
+$flashVars = sprintf('playerOpts=playListPath*^^%s^%s*s',
+urlencode($src), urlencode($thumbUrl));
+$flashVars .= '||autoLoad*false*b'; 
+$flashVars .= '||pauseAtFirstFrame*true*b'; 
+$flashVars .= '||autoRewind*false*b'; 
+$flashVars .= '||pauseAtLastFrame*false*b'; 
+$flashVars .= '||showReplay*true*b'; 
+$flashVars .= '||minWidth*'.$width.'*i'; 
+$flashVars .= '||minHeight*'.$height.'*i'; 
+
+  $jsWarning = $module->translate('JavaScript required to view this content.');
+$objWidth = $width;
+if ($height == 360 || $height == 352)
+{
+    $objHeight = $height+33;
+}
+else
+{
+    $objHeight = $height+33;
+}
+  return  sprintf(
+    '<script type="text/javascript" src="%s"></script>
+    <script type="text/javascript">
+    // <![CDATA[
+    function divResize(id, nw, nh) {
+      var obj = document.getElementById(id);
+      obj.style.width = nw + "px";
+      obj.style.height = nh + "px";
+    }
+    // ]]>
+    </script>
+    <div id="flashvideo" style="align:left;width:%s;height:%s">
+    <div id="flvContent" style="width: 100%%; height: 100%%">%s</div>
+    </div>
+    <script type="text/javascript">
+    // <![CDATA[
+    var so = new SWFObject("%s", "%s", "%s", "%s", "9.0.115.0", "ffffff");
+    so.addParam("allowScriptAccess","always");
+    so.addParam("flashVars","%s");
+    so.useExpressInstall("%s");
+    so.addParam("wmode","transparent");
+    so.addParam("allowFullScreen","true");
+    so.write("flvContent");
+    // ]]>
+    </script>
+    <table style="width: %spx; border-width: 0px; border-spacing: 0px; "><tr><td style="width: 300px; height: 20px; padding: 2px 0 0 0; vertical-align: middle">
+    <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="%s" show_faces="false" width="300" font=""></fb:like>
+    </td><td style="text-align: right; vertical-align: middle">
+    <!-- AddThis Button BEGIN -->
+    <a class="addthis_button" href="http://www.addthis.com/bookmark.php?v=250&amp;pubid=ra-4daa05c11b704dcf"><img src="http://s7.addthis.com/static/btn/sm-share-en.gif" width="83" height="16" alt="Bookmark and Share" style="border:0"/></a>
+    <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4daa05c11b704dcf"></script>
+    <!-- AddThis Button END -->
+    </td><td style="width: 70px; text-align: right; vertical-align: middle">
+    <a href="%s">Download</a>
+    </td></tr></table>',
+    $SWFObjectUrl, $objWidth, $objHeight, $jsWarning, $playerUrl,!empty($params['id']) ? $params['id'] : 'movie',
+                  $objWidth, $objHeight, $flashVars, $expressInstallUrl, $objWidth, urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), $src);
+    }
+}
+?>

@@ -1,0 +1,62 @@
+Index: module.inc
+===================================================================
+--- module.inc	(revision 14322)
++++ module.inc	(working copy)
+@@ -192,10 +192,57 @@
+ 	    return $ret;
+ 	}
+ 
++	$ret = GalleryCoreApi::registerFactoryImplementation(
++	    'NotificationEventInterface_1_0', 'CommentAddEvent', 'CommentAddEvent',
++	    'modules/comment/classes/CommentAddEvent.class', 'comment', null);
++	if ($ret) {
++	    return $ret;
++	}
++
+ 	return null;
+     }
+ 
+     /**
++     * @see GalleryModule::activate
++     */
++    function activate($postActivationEvent=true) {
++	list ($ret, $notificationSystem) = GalleryCoreApi::newFactoryInstance(
++	    'NotificationSystemInterface_1_0');
++	if ($ret) {
++	    return array($ret, null);
++	} else if ($notificationSystem) {
++	    $notificationSystem->registerEvent('CommentAddEvent');
++	}
++
++	list ($ret, $redirect) = parent::activate($postActivationEvent);
++	if ($ret) {
++	    return array($ret, null);
++	}
++
++	return array(null, $redirect);
++    }
++
++    /**
++     * @see GalleryModule::deactivate
++     */
++    function deactivate($postDeactivationEvent=true) {
++	list ($ret, $notificationSystem) = GalleryCoreApi::newFactoryInstance(
++	    'NotificationSystemInterface_1_0');
++	if ($ret) {
++	    return array($ret, null);
++	} else if ($notificationSystem) {
++	    $notificationSystem->unregisterEvent('CommentAddEvent');
++	}
++
++	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
++	if ($ret) {
++	    return array($ret, null);
++	}
++
++	return array(null, $redirect);
++    }
++
++    /**
+      * @see GalleryModule::getModuleEntityTypes
+      */
+     function getModuleEntityTypes() {

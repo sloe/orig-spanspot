@@ -1,0 +1,61 @@
+Index: AddComment.inc
+===================================================================
+--- AddComment.inc	(revision 14361)
++++ AddComment.inc	(working copy)
+@@ -144,6 +144,57 @@
+ 		    return array($ret, null);
+ 		}
+ 
++		/* Post event to the notification system */
++		list ($ret, $notificationSystem) = GalleryCoreApi::newFactoryInstance(
++		    'NotificationSystemInterface_1_0');
++		if ($ret) {
++		    return array($ret, null);
++		} else if (isset($notificationSystem)) {
++		    $gallery->debug('CommentNotification: Checking for enabled event...');
++		    /* Make sure the event is enabled before going any further. */
++		    list ($ret, $eventEnabled) = $notificationSystem->isEventEnabled(
++			'CommentAddEvent');
++		    if ($ret) {
++			return array($ret, null);
++		    } else if ($eventEnabled) {
++			$gallery->debug('CommentNotification: Generating URL...');
++			/* Get the URL to the item so users know where to go */
++			$urlGenerator =& $gallery->getUrlGenerator();
++			$parentUrl = $urlGenerator->generateUrl(
++			    array(
++				'view' => 'core.ShowItem', 
++				'itemId' => $itemId), 
++			    array(
++				'forceFullUrl' => true,
++				'forceSessionId' => false,
++				'htmlEntities' => false));
++
++			list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
++			if ($ret) {
++			    return array($ret, null);
++			}
++
++			/* Build the event information to be passed on to the Notification system */
++			$eventInformation = array(
++			    'itemId' => $itemId, 
++			    'postFilter' => array(
++				'permissionId' => $itemId), 
++			    'short' => array($item->getTitle()), 
++			    'long' => array(
++				$item->getTitle(), 
++				$parentUrl, 
++				$comment->getComment()));
++			
++			$gallery->debug('CommentNotification: Posting event...');
++			list ($ret, $notificationStatus) = $notificationSystem->postEvent(
++			    'CommentAddEvent', $eventInformation);
++			if ($ret) {
++			    return array($ret, null);
++			}
++		    }
++		}
++
+ 		/* Send the user to a confirmation page, for now */
+ 		$redirect['view'] = 'comment.CommentChangeConfirmation';
+ 		$redirect['itemId'] = (int)$itemId;

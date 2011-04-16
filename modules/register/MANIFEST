@@ -1,0 +1,21 @@
+# $Revision: 18176 $
+# File crc32 crc32(crlf) size size(crlf)  or  R File
+modules/register/AdminSelfRegistration.inc	1450249753	1614696260	6087	6271
+modules/register/ConfirmRegistration.inc	3844136754	1757784639	3007	3098
+modules/register/SelfRegistrationSuccess.inc	4027695182	300709337	1762	1808
+modules/register/UserSelfRegistration.inc	736131403	3810717247	7378	7620
+modules/register/classes/Entities.inc	1221958225	962197223	883	898
+modules/register/classes/GNUmakefile	1995366819	843025639	51	52
+modules/register/classes/GalleryPendingUser.class	426603587	2038545149	6463	6725
+modules/register/classes/GalleryPendingUserHelper.class	2191639863	1992620760	11873	12264
+modules/register/classes/GalleryStorage/GNUmakefile	1465776782	2009162633	61	62
+modules/register/classes/GalleryStorage/schema.tpl	1096339555	885059222	4055	4188
+modules/register/classes/RegisterCaptchaAdminOption.class	1578338079	2615908369	1542	1585
+modules/register/module.inc	285129770	2606696288	4220	4366
+modules/register/templates/AdminEmail.tpl	55091337	1777258996	497	510
+modules/register/templates/AdminSelfRegistration.tpl	2129611445	3660370545	5261	5412
+modules/register/templates/ConfirmRegistration.tpl	2963400137	3752331800	844	870
+modules/register/templates/ConfirmationEmail.tpl	1713865073	2113866380	638	653
+modules/register/templates/SelfRegistrationSuccess.tpl	4064764910	4132640095	1350	1387
+modules/register/templates/UserSelfRegistration.tpl	884353210	2740354428	2868	2969
+modules/register/templates/WelcomeEmail.tpl	3036640492	1788145169	416	428

@@ -1,0 +1,9 @@
+# $Revision: 18176 $
+# File crc32 crc32(crlf) size size(crlf)  or  R File
+modules/itemadd/ItemAddFromServer.inc	1916247786	928870497	26678	27462
+modules/itemadd/ItemAddFromWeb.inc	1003758832	2767389566	15610	16091
+modules/itemadd/ItemAddSiteAdmin.inc	2042722500	3707549986	5984	6162
+modules/itemadd/module.inc	2104948430	3697628266	2776	2869
+modules/itemadd/templates/ItemAddFromServer.tpl	1158402412	450171189	11206	11527
+modules/itemadd/templates/ItemAddFromWeb.tpl	2954343794	1796936969	6003	6181
+modules/itemadd/templates/ItemAddSiteAdmin.tpl	20489989	2079358805	4281	4396

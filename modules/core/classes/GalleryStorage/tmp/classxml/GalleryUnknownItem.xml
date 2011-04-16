@@ -1,0 +1,11 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryUnknownItem</class-name>
+<parent-class-name>GalleryDataItem</parent-class-name>
+<schema>
+<schema-name>UnknownItem</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>0</schema-minor>
+</schema>
+<requires-id/>
+</class>

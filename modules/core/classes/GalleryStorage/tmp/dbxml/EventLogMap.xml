@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>EventLogMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>0</schema-minor>
+   </schema>
+   <column>
+      <column-name>id</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>userId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>type</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+   </column>
+   <column>
+      <column-name>summary</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>details</column-name>
+      <column-type>TEXT</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>location</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>client</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>timestamp</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>referer</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <key primary="true">
+     <column-name>id</column-name>
+   </key>
+   <index>
+     <column-name>timestamp</column-name>
+   </index>
+</table>

@@ -1,0 +1,158 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * This is an interface for the notification module system.
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ * @abstract
+ */
+class NotificationSystemInterface_1_0 {
+
+    /**
+     * Modules will call this method to register an alternate notification method
+     *
+     * @param string $methodClass method class name
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function registerMethod($methodClass) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules will call this method to unregister their notification method
+     *
+     * @param string $methodClass method class name
+     * @param boolean $removeSettings remove settings related to the event
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function unregisterMethod($methodClass, $removeSettings=true) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules will call this method to register their event and store it in the database.
+     *
+     * @param string $eventClass event class name
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function registerEvent($eventClass) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules can call this to see if an event is enabled by the site. Calling this will allow
+     * them to skip over any prep-work associated with preparing the event and just continue on.
+     *
+     * @param string $eventClass module.event
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean enabled)
+     */
+    function isEventEnabled($eventClass) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules will call this method to unregister their event and remove it from the database.
+     *
+     * @param string $eventClass event class name
+     * @param boolean $removeSettings remove settings related to the event
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function unregisterEvent($eventClass, $removeSettings=true) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules providing alternative subscription handling can subscribe users to an event using
+     * this method.
+     *
+     * @param string $eventClass event class name
+     * @param int $uniqueId unique id to an item, album, comment, etc
+     * @param int $userId id of user to subscribe
+     * @param int $methodClass class name of preferred method
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function subscribeEvent($eventClass, $uniqueId, $userId, $methodClass=null) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Find out if a user is subscribed to this event or not.
+     *
+     * @param string $eventClass event class name
+     * @param int $userId userId
+     * @param object item $item
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean subscribed)
+     */
+    function isSubscribed($eventClass, $userId, $item) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Get a list of all active subscribers to an event
+     *
+     * @param string $eventClass event class name
+     * @param int $uniqueId unique id to an item, album, comment, etc
+     * @return array array(object GalleryStatus a status code, 
+     *                     array of subscribers => preferred method class name)
+     */
+    function getSubscribers($eventClass, $uniqueId) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules providing alternative subscription handling can unsubscribe users to an event using
+     * this method.
+     *
+     * @param string $eventClass event class name
+     * @param int $uniqueId unique id to an item, album, comment, etc
+     * @param mixed $userId integer or array of userId to unsubscribe from event
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function unsubscribeEvent($eventClass, $uniqueId, $userId) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+
+    /**
+     * Modules will call this method when an event has occured and notification should take place.
+     *
+     * @param string $eventClass event class name
+     * @param array $eventInformation array('item' => object item OR 'itemId' => itemId, 
+     *                    'postFilter' => array('permissionId' => itemId), 
+     *                    'short' => array(sprintf array), 
+     *                    'long' => array(sprintf array))
+     * @return array array(object GalleryStatus a status code, 
+     *                     boolean status)
+     */
+    function postEvent($eventClass, $eventInformation) {
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }
+}
+?>

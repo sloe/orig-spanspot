@@ -1,0 +1,83 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationEventInterface_1_0.class');
+
+/**
+ * This NotificationEvent is used when new items are added to the gallery
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ */
+class NotificationEventItemAdd extends NotificationEventInterface_1_0 {
+
+    /**
+     * @see NotificationEventInterface_1_0::getName
+     */
+    function getName() {
+	global $gallery;
+	return $gallery->i18n('New Item');
+    }
+
+    /**
+     * @see NotificationEventInterface_1_0::getDescription
+     */
+    function getDescription() {
+	global $gallery;
+	return $gallery->i18n('Get notified any time a new item (album, photo, etc) is added.');
+    }
+
+    /**
+     * @see NotificationEventInterface_1_0::getItemWatchPermission
+     */
+    function getItemWatchPermission($item) {
+	if (!GalleryUtilities::isA($item, 'GalleryItem') || !$item->getCanContainChildren()) {
+	    return array(null, false);
+	}
+
+	return array(null, true);
+    }
+
+    /**
+     * @see NotificationEventInterface_1_0::getShortMessage
+     */
+    function getShortMessage() {
+	global $gallery;
+	return $gallery->i18n('New %s');
+    }
+
+    /**
+     * @see NotificationEventInterface_1_0::getLongMessage
+     */
+    function getLongMessage() {
+	global $gallery;
+	return $gallery->i18n('A new %s has been added. To view it at the site, click here: ' . 
+	    "\n" . '%s');
+    }
+
+    /**
+     * @see NotificationEventInterface_1_0::getPermission
+     */
+    function getPermission() {
+	return array(null, 'core.view');
+    }
+}
+?>

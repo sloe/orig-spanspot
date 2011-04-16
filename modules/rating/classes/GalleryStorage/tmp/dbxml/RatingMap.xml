@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>RatingMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>0</schema-minor>
+   </schema>
+   <column>
+      <column-name>ratingId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>itemId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>subItemId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>userId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>rating</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>sessionId</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>remoteIdentifier</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <key primary="true">
+     <column-name>ratingId</column-name>
+   </key>
+   <index>
+     <column-name>itemId</column-name>
+   </index>
+   <index>
+     <column-name>itemId</column-name>
+     <column-name>userId</column-name>
+   </index>
+   <index>
+     <column-name>itemId</column-name>
+     <column-name>remoteIdentifier</column-name>
+   </index>
+</table>

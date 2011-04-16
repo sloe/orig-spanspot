@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>CacheMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>1</schema-minor>
+   </schema>
+   <column>
+      <column-name>key</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>value</column-name>
+      <column-type>TEXT</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>userId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>itemId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>type</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>timestamp</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>isEmpty</column-name>
+      <column-type>BOOLEAN</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <key primary="true">
+     <column-name>key</column-name>
+     <column-name>userId</column-name>
+     <column-name>itemId</column-name>
+     <column-name>type</column-name>
+   </key>
+   <index>
+     <column-name>itemId</column-name>
+   </index>
+   <index>
+     <column-name>userId</column-name>
+     <column-name>timestamp</column-name>
+     <column-name>isEmpty</column-name>
+   </index>
+</table>

@@ -1,0 +1,8 @@
+# $Revision: 18176 $
+# File crc32 crc32(crlf) size size(crlf)  or  R File
+modules/jpegtran/AdminJpegtran.inc	537911575	1985995131	6697	6935
+modules/jpegtran/classes/JpegtranToolkit.class	3318151942	890416924	6159	6362
+modules/jpegtran/classes/JpegtranToolkitHelper.class	2276432808	1383355685	6687	6875
+modules/jpegtran/data/test.jpg	3585624450	3585624450	763	763
+modules/jpegtran/module.inc	3343178367	940985404	7695	7967
+modules/jpegtran/templates/AdminJpegtran.tpl	873253927	2207479870	4888	5026

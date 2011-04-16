@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>Derivative</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>1</schema-minor>
+   </schema>
+   <column>
+      <column-name>id</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>derivativeSourceId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>derivativeOperations</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>derivativeOrder</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>derivativeSize</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>derivativeType</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>mimeType</column-name>
+      <column-type>STRING</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null empty="disallowed"/>
+   </column>
+   <column>
+      <column-name>postFilterOperations</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+   </column>
+   <column>
+      <column-name>isBroken</column-name>
+      <column-type>BOOLEAN</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <key primary="true">
+     <column-name>id</column-name>
+   </key>
+   <index>
+     <column-name>derivativeSourceId</column-name>
+   </index>
+   <index>
+     <column-name>derivativeOrder</column-name>
+   </index>
+   <index>
+     <column-name>derivativeType</column-name>
+   </index>
+</table>

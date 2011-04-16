@@ -1,0 +1,16 @@
+# $Revision: 18176 $
+# File crc32 crc32(crlf) size size(crlf)  or  R File
+modules/remote/GalleryRemote.inc	908102996	2873310721	38753	40003
+modules/remote/GalleryRemoteWebStart.inc	2854769784	1522422252	3346	3462
+modules/remote/ItemAddGalleryRemote.inc	3782132920	3485470761	2003	2070
+modules/remote/RemoteSiteAdmin.inc	2760017490	1822786855	2619	2711
+modules/remote/applets/GalleryRemote.jar	6890469	6890469	705806	705806
+modules/remote/applets/img.jar	4087949072	4087949072	19225	19225
+modules/remote/applets/metadata-extractor-2.1.jar	1088430076	1088430076	69726	69726
+modules/remote/classes/GalleryRemoteConstants.class	4130012332	1982776054	2681	2764
+modules/remote/classes/GalleryRemoteProperties.class	3681535635	496594609	2967	3065
+modules/remote/images/rar_about_gr1.png	2906701870	2906701870	6720	6720
+modules/remote/images/rar_icon_32.gif	939897893	939897893	1718	1718
+modules/remote/module.inc	77339577	882986828	2508	2593
+modules/remote/templates/ItemAddGalleryRemote.tpl	3245453232	65028951	943	959
+modules/remote/templates/RemoteSiteAdmin.tpl	2474736933	2620707733	939	967

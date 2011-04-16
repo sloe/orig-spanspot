@@ -1,0 +1,21 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryDerivativeImage</class-name>
+<parent-class-name>GalleryDerivative</parent-class-name>
+<schema>
+<schema-name>DerivativeImage</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>0</schema-minor>
+</schema>
+<requires-id/>
+<member>
+<member-name>width</member-name>
+<member-type>INTEGER</member-type>
+<member-external-access>READ</member-external-access>
+</member>
+<member>
+<member-name>height</member-name>
+<member-type>INTEGER</member-type>
+<member-external-access>READ</member-external-access>
+</member>
+</class>

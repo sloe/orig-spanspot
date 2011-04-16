@@ -1,0 +1,23 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryGroup</class-name>
+<parent-class-name>GalleryEntity</parent-class-name>
+<schema>
+<schema-name>Group</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>1</schema-minor>
+</schema>
+<requires-id/>
+<member>
+<member-name>groupType</member-name>
+<member-type>INTEGER</member-type>
+<required/>
+</member>
+<member>
+<member-name>groupName</member-name>
+<member-type>STRING</member-type>
+<member-size>MEDIUM</member-size>
+<unique/>
+<member-external-access>READ</member-external-access>
+</member>
+</class>

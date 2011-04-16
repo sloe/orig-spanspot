@@ -1,0 +1,24 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryDataItem</class-name>
+<parent-class-name>GalleryItem</parent-class-name>
+<schema>
+<schema-name>DataItem</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>0</schema-minor>
+</schema>
+<requires-id/>
+<member>
+<member-name>mimeType</member-name>
+<member-type>STRING</member-type>
+<member-size>MEDIUM</member-size>
+<linked/>
+<member-external-access>READ</member-external-access>
+</member>
+<member>
+<member-name>size</member-name>
+<member-type>INTEGER</member-type>
+<linked/>
+<member-external-access>READ</member-external-access>
+</member>
+</class>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE table
+  SYSTEM "../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd">
+<table>
+   <table-name>ItemAttributesMap</table-name>
+   <schema>
+      <schema-major>1</schema-major>
+      <schema-minor>0</schema-minor>
+   </schema>
+   <column>
+      <column-name>itemId</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+      <not-null/>
+   </column>
+   <column>
+      <column-name>viewCount</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>orderWeight</column-name>
+      <column-type>INTEGER</column-type>
+      <column-size>MEDIUM</column-size>
+   </column>
+   <column>
+      <column-name>parentSequence</column-name>
+      <column-type>STRING</column-type>
+      <column-size>LARGE</column-size>
+      <not-null empty="allowed"/>
+   </column>
+   <key primary="true">
+     <column-name>itemId</column-name>
+   </key>
+   <index>
+     <column-name>parentSequence</column-name>
+   </index>
+</table>

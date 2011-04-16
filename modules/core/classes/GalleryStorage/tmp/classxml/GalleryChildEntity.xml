@@ -1,0 +1,17 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryChildEntity</class-name>
+<parent-class-name>GalleryEntity</parent-class-name>
+<schema>
+<schema-name>ChildEntity</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>0</schema-minor>
+</schema>
+<requires-id/>
+<member>
+<member-name>parentId</member-name>
+<member-type>INTEGER</member-type>
+<indexed/>
+<required/>
+</member>
+</class>

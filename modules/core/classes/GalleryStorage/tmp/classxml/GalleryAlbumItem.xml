@@ -1,0 +1,26 @@
+<!DOCTYPE class SYSTEM "../../../../lib/tools/dtd/GalleryClass2.1.dtd">
+<class>
+<class-name>GalleryAlbumItem</class-name>
+<parent-class-name>GalleryItem</parent-class-name>
+<schema>
+<schema-name>AlbumItem</schema-name>
+<schema-major>1</schema-major>
+<schema-minor>1</schema-minor>
+</schema>
+<requires-id/>
+<member>
+<member-name>theme</member-name>
+<member-type>STRING</member-type>
+<member-size>SMALL</member-size>
+</member>
+<member>
+<member-name>orderBy</member-name>
+<member-type>STRING</member-type>
+<member-size>MEDIUM</member-size>
+</member>
+<member>
+<member-name>orderDirection</member-name>
+<member-type>STRING</member-type>
+<member-size>SMALL</member-size>
+</member>
+</class>

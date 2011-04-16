@@ -1,0 +1,130 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * This is an interface for handling notification events for the notification module.
+ * @package Notification
+ * @subpackage Classes
+ * @author Zimzat <zimzat@zimzat.com>
+ * @version $Revision: 847 $
+ * @abstract
+ */
+class NotificationEventInterface_1_0 {
+
+    /**
+     * Return the translation domain to use. (eg. pluginType . 's_' . pluginId)
+     *
+     * @return string Translation Domain
+     */
+    function getTranslationDomain() {
+	return 'modules_notification';
+    }
+
+    /**
+     * Return the name of the event.
+     *
+     * @return string Name of event
+     */
+    function getName() {
+	global $gallery;
+	return $gallery->i18n('Unimplemented');
+    }
+
+    /**
+     * Return the description of the event.
+     *
+     * @return string Description of event
+     */
+    function getDescription() {
+	global $gallery;
+	return $gallery->i18n('Unimplemented');
+    }
+
+    /**
+     * Return a boolean value to indicate if the event should be shown on this item watch page.
+     *
+     * @param object Item $item
+     * @return array array(object GalleryStatus a status code,
+     *                     boolean event enabled status)
+     */
+    function getItemWatchPermission($item) {
+	return array(null, true);
+    }
+
+    /**
+     * Return a short message describing the event.
+     *
+     * @return string A short message sent when the event is triggered
+     */
+    function getShortMessage() {
+	global $gallery;
+	return $gallery->i18n('Unimplemented');
+    }
+
+    /**
+     * Return a long message describing the event.
+     *
+     * @return string A long message sent when the event is triggered
+     */
+    function getLongMessage() {
+	global $gallery;
+	return $gallery->i18n('Unimplemented');
+    }
+
+    /**
+     * What permission of the item should be checked to see if a user is allowed to 
+     * get that event. Used by the inhereted postFilter for default use.
+     *
+     * @return array array(object GalleryStatus a status code,
+     *                     string name of permission to check)
+     */
+    function getPermission() {
+	return array(null, null);
+    }
+
+    /**
+     * Once the subscribed users have been retrieved, this event will check each user for 
+     * permission to see that event. It returns a list of users that are allowed to receive
+     * the event notification.
+     *
+     * @return array array(object GalleryStatus a status code,
+     *                     user ids after checking for permissions)
+     */
+    function postFilter($userIds, $eventInformation) {
+	list ($ret, $permission) = $this->getPermission();
+	if ($ret) {
+	    return array($ret, null);
+	} else if (!empty($permission) && !empty($eventInformation['postFilter']['itemId'])) {
+	    /* Make sure all subscribers have proper permissions to see this item. */
+	    foreach (array_keys($userIds) as $userId) {
+		list ($ret, $hasItemPermission) = GalleryCoreApi::hasItemPermission(
+			$eventInformation['postFilter']['itemId'], $permission, $userId);
+		if ($ret) {
+		    return array($ret, null);
+		} else if ($hasItemPermission == false) {
+		    unset($userIds[$userId]);
+		}
+	    }
+	}
+
+	return array(null, $userIds);
+    }
+}
+?>
