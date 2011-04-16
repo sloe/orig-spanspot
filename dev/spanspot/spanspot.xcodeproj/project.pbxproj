@@ -8366,7 +8366,7 @@
 			buildPhases = (
 			);
 			buildToolPath = dev/bin/upload_to_staging.sh;
-			buildWorkingDirectory = /Users/southa/spandex/spanspot;
+			buildWorkingDirectory = ../..;
 			dependencies = (
 			);
 			name = spanspot;
@@ -8378,9 +8378,20 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				ORGANIZATIONNAME = "Spanner Spotter";
+			};
 			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "spanspot" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* spanspot */;
 			projectDirPath = "";
 			projectReferences = (
@@ -8419,7 +8430,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = spanspot;
+				PRODUCT_NAME = spanspot_staging;
 			};
 			name = Release;
 		};
