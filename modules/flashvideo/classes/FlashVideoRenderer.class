@@ -42,6 +42,11 @@ class FlashVideoRenderer extends GalleryRenderer {
      */
     function render($format, $entity, $item, $params) {
   global $gallery;
+        
+  $session =& $gallery->getSession();
+
+  $player = $session->get('spanspot.player');
+        
   $fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
 
   if ($format != 'HTML' || ($entity->getMimeType() != 'video/x-flv' && $entity->getMimeType() != 'video/mp4')) {
@@ -66,6 +71,8 @@ class FlashVideoRenderer extends GalleryRenderer {
   }
   GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
   $title = smarty_modifier_markup($title, 'strip');
+
+
 
   /* Default player: G2flv.swf */
   /* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
@@ -138,58 +145,60 @@ class FlashVideoRenderer extends GalleryRenderer {
         ) as $key => $value) {
       $flashVars .= '&' . $key . '=' . urlencode($value);
   }
-
-  /*
-   * To use FlowPlayer ( http://flowplayer.sourceforge.net )
-   * place FlowPlayer.swf in the flashvideo/lib directory and uncomment the lines below:
-   */
-  /*
-  $playerUrl = $urlGenerator->generateUrl(
-        array('href' => 'modules/flashvideo/lib/FlowPlayer.swf'),
+  
+  if ($player == "flowplayer") {
+    /*
+     * To use FlowPlayer ( http://flowplayer.sourceforge.net )
+     * place FlowPlayer.swf in the flashvideo/lib directory and uncomment the lines below:
+     */    
+    $playerUrl = $urlGenerator->generateUrl(
+        array('href' => 'modules/flashvideo/lib/flowplayergpl/flowplayer-3.2.7.swf'),
         array('forceFullUrl' => true));
-    $flashVars = sprintf('config={videoFile: \'%s\'}&autoPlay=true&loop=false',
-        urlencode($src));
-    $extraAttr = ' wmode="transparent"';
-  */
-
-  /*
-   * To use FLVPlayer ( http://www.peldi.com/fmswiki/index.php?title=FLVPlayer )
-   * get this version of the player: http://gallery.menalto.com/files/.zip
-   * unzip in the flashvideo/lib directory and uncomment the lines below:
-   */
- /* 
-  $playerUrl = $urlGenerator->generateUrl(
-    array('href' => 'modules/flashvideo/lib/FlvPlayer-new.swf'),
+    $pseudoUrl = $urlGenerator->generateUrl(
+        array('href' => 'modules/flashvideo/lib/flowplayergpl.pseudostreaming/flowplayer.pseudostreaming-3.2.7.swf'),
+        array('forceFullUrl' => true));
+    $flashVars = sprintf("config={'plugins':{'pseudo':{'url':'%s'},'controls':{'url':'%s'}},'clip':{'provider':'pseudo','url':'%s'}}",
+        'flowplayer.pseudostreaming-3.2.7.swf', 'flowplayer.controls-3.2.5.swf', urlencode($src));
+  } elseif ($player == "flvplayer") {
+    /*
+     * To use FLVPlayer ( http://www.peldi.com/fmswiki/index.php?title=FLVPlayer )
+     * get this version of the player: http://gallery.menalto.com/files/.zip
+     * unzip in the flashvideo/lib directory and uncomment the lines below:
+     */
+    $playerUrl = $urlGenerator->generateUrl(
+      array('href' => 'modules/flashvideo/lib/FlvPlayer-new.swf'),
+      array('forceFullUrl' => true));
+    $skinUrl = $urlGenerator->generateUrl(
+      array('href' => 'modules/flashvideo/lib/skin'), array('forceFullUrl' => true));
+    $flashVars = sprintf('flvpVideoSource=%s&autoPlay=true&autoRewind=false',
+             urlencode($src));
+    $flashVars .= '&flvpWidth='.$width.'&flvpHeight='.$height;
+  } else {
+    $playerUrl = $urlGenerator->generateUrl(
+    array('href' => 'modules/flashvideo/moyea/mwplayer.swf'),
     array('forceFullUrl' => true));
-  $skinUrl = $urlGenerator->generateUrl(
-    array('href' => 'modules/flashvideo/lib/skin'), array('forceFullUrl' => true));
-  $flashVars = sprintf('flvpVideoSource=%s&autoPlay=true&autoRewind=false',
-           urlencode($src));
-  $flashVars .= '&flvpWidth='.$width.'&flvpHeight='.$height;
-  */
-$playerUrl = $urlGenerator->generateUrl(
-array('href' => 'modules/flashvideo/moyea/mwplayer.swf'),
-array('forceFullUrl' => true));
-$flashVars = sprintf('playerOpts=playListPath*^^%s^%s*s',
-urlencode($src), urlencode($thumbUrl));
-$flashVars .= '||autoLoad*false*b'; 
-$flashVars .= '||pauseAtFirstFrame*true*b'; 
-$flashVars .= '||autoRewind*false*b'; 
-$flashVars .= '||pauseAtLastFrame*false*b'; 
-$flashVars .= '||showReplay*true*b'; 
-$flashVars .= '||minWidth*'.$width.'*i'; 
-$flashVars .= '||minHeight*'.$height.'*i'; 
-
-  $jsWarning = $module->translate('JavaScript required to view this content.');
-$objWidth = $width;
-if ($height == 360 || $height == 352)
-{
-    $objHeight = $height+33;
-}
-else
-{
-    $objHeight = $height+33;
-}
+    $flashVars = sprintf('playerOpts=playListPath*^^%s^%s*s',
+    urlencode($src), urlencode($thumbUrl));
+    $flashVars .= '||autoLoad*false*b'; 
+    $flashVars .= '||pauseAtFirstFrame*true*b'; 
+    $flashVars .= '||autoRewind*false*b'; 
+    $flashVars .= '||pauseAtLastFrame*false*b'; 
+    $flashVars .= '||showReplay*true*b'; 
+    $flashVars .= '||minWidth*'.$width.'*i'; 
+    $flashVars .= '||minHeight*'.$height.'*i'; 
+  }
+  $jsWarning = $module->translate('A Flash player and JavaScript are required to view this content.');
+  $objWidth = $width;
+  if ($height == 360 || $height == 352)
+  {
+      $objHeight = $height+33;
+  }
+  else
+  {
+      $objHeight = $height+33;
+  }
+  $player = $session->put('spanspot.player', 'flowplayer');
+  
   return  sprintf(
     '<script type="text/javascript" src="%s"></script>
     <script type="text/javascript">

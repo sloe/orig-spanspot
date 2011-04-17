@@ -663,7 +663,7 @@
 		7ACD31C21359FD5200F4F315 /* AdminFlashvideo.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = AdminFlashvideo.inc; path = ../../modules/flashvideo/AdminFlashvideo.inc; sourceTree = SOURCE_ROOT; };
 		7ACD31C31359FD5200F4F315 /* FlashVideoOption.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = FlashVideoOption.inc; path = ../../modules/flashvideo/FlashVideoOption.inc; sourceTree = SOURCE_ROOT; };
 		7ACD31C41359FD5200F4F315 /* MANIFEST */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MANIFEST; path = ../../modules/flashvideo/MANIFEST; sourceTree = SOURCE_ROOT; };
-		7ACD31C61359FD5200F4F315 /* FlashVideoRenderer.class */ = {isa = PBXFileReference; lastKnownFileType = compiled.javaclass; name = FlashVideoRenderer.class; path = ../../modules/flashvideo/classes/FlashVideoRenderer.class; sourceTree = SOURCE_ROOT; };
+		7ACD31C61359FD5200F4F315 /* FlashVideoRenderer.class */ = {isa = PBXFileReference; explicitFileType = sourcecode; indentWidth = 2; name = FlashVideoRenderer.class; path = ../../modules/flashvideo/classes/FlashVideoRenderer.class; sourceTree = SOURCE_ROOT; tabWidth = 2; };
 		7ACD31C71359FD5200F4F315 /*  */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ""; path = "../../modules/flashvideo/classes/"; sourceTree = SOURCE_ROOT; };
 		7ACD31C91359FD5200F4F315 /* E2.swf */ = {isa = PBXFileReference; lastKnownFileType = file; name = E2.swf; path = ../../modules/flashvideo/lib/E2.swf; sourceTree = SOURCE_ROOT; };
 		7ACD31CA1359FD5200F4F315 /* FlvPlayer-new.swf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FlvPlayer-new.swf"; path = "../../modules/flashvideo/lib/FlvPlayer-new.swf"; sourceTree = SOURCE_ROOT; };
@@ -1772,8 +1772,8 @@
 		7ACD37261359FFC500F4F315 /* pbxindex.header */ = {isa = PBXFileReference; lastKnownFileType = file; name = pbxindex.header; path = build/spanspot.build/spanspot.pbxindex/pbxindex.header; sourceTree = SOURCE_ROOT; };
 		7ACD37271359FFC500F4F315 /* protocols.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; name = protocols.pbxbtree; path = build/spanspot.build/spanspot.pbxindex/protocols.pbxbtree; sourceTree = SOURCE_ROOT; };
 		7ACD37281359FFC500F4F315 /* refs.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; name = refs.pbxbtree; path = build/spanspot.build/spanspot.pbxindex/refs.pbxbtree; sourceTree = SOURCE_ROOT; };
-		7ACD372A1359FFC500F4F315 /* control */ = {isa = PBXFileReference; lastKnownFileType = file; name = control; path = build/spanspot.build/spanspot.pbxindex/strings.pbxstrings/control; sourceTree = SOURCE_ROOT; };
-		7ACD372B1359FFC500F4F315 /* strings */ = {isa = PBXFileReference; lastKnownFileType = file; name = strings; path = build/spanspot.build/spanspot.pbxindex/strings.pbxstrings/strings; sourceTree = SOURCE_ROOT; };
+		7ACD372A1359FFC500F4F315 /* control */ = {isa = PBXFileReference; lastKnownFileType = text; name = control; path = build/spanspot.build/spanspot.pbxindex/strings.pbxstrings/control; sourceTree = SOURCE_ROOT; };
+		7ACD372B1359FFC500F4F315 /* strings */ = {isa = PBXFileReference; lastKnownFileType = text; name = strings; path = build/spanspot.build/spanspot.pbxindex/strings.pbxstrings/strings; sourceTree = SOURCE_ROOT; };
 		7ACD372C1359FFC500F4F315 /* subclasses.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; name = subclasses.pbxbtree; path = build/spanspot.build/spanspot.pbxindex/subclasses.pbxbtree; sourceTree = SOURCE_ROOT; };
 		7ACD372D1359FFC500F4F315 /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; name = symbols0.pbxsymbols; path = build/spanspot.build/spanspot.pbxindex/symbols0.pbxsymbols; sourceTree = SOURCE_ROOT; };
 		7ACD372E1359FFC500F4F315 /* spanspot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = spanspot.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -8366,7 +8366,7 @@
 			buildPhases = (
 			);
 			buildToolPath = dev/bin/upload_to_staging.sh;
-			buildWorkingDirectory = /Users/southa/spandex/spanspot;
+			buildWorkingDirectory = ../..;
 			dependencies = (
 			);
 			name = spanspot;
@@ -8378,9 +8378,19 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				ORGANIZATIONNAME = "Spanner Spotter";
+			};
 			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "spanspot" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* spanspot */;
 			projectDirPath = "";
 			projectReferences = (
@@ -8419,7 +8429,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = spanspot;
+				PRODUCT_NAME = spanspot_staging;
 			};
 			name = Release;
 		};
