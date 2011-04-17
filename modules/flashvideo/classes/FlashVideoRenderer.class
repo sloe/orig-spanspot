@@ -45,6 +45,11 @@ class FlashVideoRenderer extends GalleryRenderer {
         
   $session =& $gallery->getSession();
 
+  $playerSet = GalleryUtilities::getRequestVariables('playerSet');
+
+  if (isset($playerSet) && $playerSet != '') {
+    $session->put('spanspot.player', $playerSet);
+  }
   $player = $session->get('spanspot.player');
         
   $fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
@@ -59,6 +64,26 @@ class FlashVideoRenderer extends GalleryRenderer {
   }
 
   $urlGenerator =& $gallery->getUrlGenerator();
+  $currentUrl = $urlGenerator->getCurrentUrl();
+  
+  $playerTypes = array('moyea' => 'Moyea', 'flowplayer' => 'FlowPlayer');
+  $playerChooser = '<table style="border-width: 0px; border-spacing: 0px"><tr style="height: 30px; vertical-align: middle"><td>Choose player:</td>';
+   
+  foreach ($playerTypes as $key => $name) {
+    $playerChooser .= '<td>';
+    if ($player == $key) {
+      $playerChooser .= sprintf('<b>%s</b>', $name);   
+    } else {
+      $selfUrl = $urlGenerator->generateUrl(
+        array('href' => $currentUrl, 'playerSet' => $key),
+        array('forceFullUrl' => true));
+      $playerChooser .= sprintf('<a href="%s">%s</a>',
+        $selfUrl, $name);
+    }
+    $playerChooser .= '</td>';
+  }
+  $playerChooser .= '</tr></table>';
+
   $src = $urlGenerator->generateUrl(
     array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
           'serialNumber' => $entity->getSerialNumber()),
@@ -197,9 +222,8 @@ class FlashVideoRenderer extends GalleryRenderer {
   {
       $objHeight = $height+33;
   }
-  $player = $session->put('spanspot.player', 'flowplayer');
   
-  return  sprintf(
+  return  $playerChooser . sprintf(
     '<script type="text/javascript" src="%s"></script>
     <script type="text/javascript">
     // <![CDATA[
