@@ -65,7 +65,10 @@ class FlashVideoRenderer extends GalleryRenderer {
 
   $urlGenerator =& $gallery->getUrlGenerator();
   $currentUrl = $urlGenerator->getCurrentUrl();
-  
+	$shareUrl = $urlGenerator->generateUrl(
+        array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'share' => '1'),
+        array('forceFullUrl' => true, 'forceDirect' => true));
+	
   $playerTypes = array('moyea' => 'Moyea', 'flowplayer' => 'FlowPlayer');
   $playerChooser = '<table style="border-width: 0px; border-spacing: 0px"><tr style="height: 30px; vertical-align: middle"><td>Choose player:</td>';
    
@@ -75,8 +78,8 @@ class FlashVideoRenderer extends GalleryRenderer {
       $playerChooser .= sprintf('<b>%s</b>', $name);   
     } else {
       $selfUrl = $urlGenerator->generateUrl(
-        array('href' => $currentUrl, 'playerSet' => $key),
-        array('forceFullUrl' => true));
+        array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'playerSet' => $key),
+        array('forceFullUrl' => true, 'forceDirect' => true));
       $playerChooser .= sprintf('<a href="%s">%s</a>',
         $selfUrl, $name);
     }
@@ -252,7 +255,7 @@ class FlashVideoRenderer extends GalleryRenderer {
     <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="%s" show_faces="false" width="300" font=""></fb:like>
     </td><td style="text-align: right; vertical-align: middle">
     <!-- AddThis Button BEGIN -->
-    <a class="addthis_button" href="http://www.addthis.com/bookmark.php?v=250&amp;pubid=ra-4daa05c11b704dcf"><img src="http://s7.addthis.com/static/btn/sm-share-en.gif" width="83" height="16" alt="Bookmark and Share" style="border:0"/></a>
+    <a class="addthis_button" addthis:url="%s" href="http://www.addthis.com/bookmark.php?v=250&amp;pubid=ra-4daa05c11b704dcf"><img src="http://s7.addthis.com/static/btn/sm-share-en.gif" width="83" height="16" alt="Bookmark and Share" style="border:0"/></a>
     <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
     <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4daa05c11b704dcf"></script>
     <!-- AddThis Button END -->
@@ -260,7 +263,7 @@ class FlashVideoRenderer extends GalleryRenderer {
     <a href="%s">Download</a>
     </td></tr></table>',
     $SWFObjectUrl, $objWidth, $objHeight, $jsWarning, $playerUrl,!empty($params['id']) ? $params['id'] : 'movie',
-                  $objWidth, $objHeight, $flashVars, $expressInstallUrl, $objWidth, urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), $src);
+                  $objWidth, $objHeight, $flashVars, $expressInstallUrl, $objWidth, urlencode($shareUrl), urlencode($shareUrl), $src);
     }
 }
 ?>
