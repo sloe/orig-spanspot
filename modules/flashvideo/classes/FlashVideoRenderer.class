@@ -93,7 +93,8 @@ $(document).ready(function() {
   $playerTypes = array(
     'moyea' => array('Moyea', 'This is the standard player with a good range of features, and is paid for so no logos.'),
     'flowplayer' => array('FlowPlayer', 'Simple but capable.  Pseudo-streaming - you can click on the timeline and the video will load from there.  Also click-image-to-pause.'),
-    'flvplayer' => array('FLVPlayer', 'A nice simple player, but the logo\'s a bit over the top.  Good blur effect at the end.')
+    'flvplayer' => array('FLVPlayer', 'A nice simple player, but the logo\'s a bit over the top.  Good blur effect at the end.'),
+    'jwplayer' => array('JW Player', 'The biggie - can do everything.  Neat post-to-Facebook feature.')    
   );
   $playerChooser = '
     <div id="playerchoice">
@@ -228,6 +229,15 @@ $(document).ready(function() {
     $flashVars .= '&flvpFolderLocation:/modules/flashvideo/lib/flvplayer/'; 
     $flashVars .= '&flvpWidth='.$width.'&flvpHeight='.$height;
     $flashVars .= '&flvpInitVolume:100&flvpTurnOnCorners:true';
+  } elseif ($player == "jwplayer") {
+    $playerUrl = $urlGenerator->generateUrl(
+      array('href' => 'modules/flashvideo/lib/jwplayer/player.swf'),
+      array('forceFullUrl' => true));
+    $flashVars = sprintf('file=%s&image=%s',
+             urlencode($src), urlencode($thumbUrl));
+    $flashVars .= '&width='.$width.'&height='.$height;
+    $flashVars .= '&stretching=none';
+    $flashVars .= sprintf('&plugins=fbit-1&fbit.link=%s', urlencode($shareUrl));
   } else {
     $playerUrl = $urlGenerator->generateUrl(
     array('href' => 'modules/flashvideo/moyea/mwplayer.swf'),
@@ -278,8 +288,8 @@ $(document).ready(function() {
     so.write("flvContent");
     // ]]>
     </script>
-    <table style="width: %spx; border-width: 0px; border-spacing: 0px; "><tr><td style="width: 300px; height: 20px; padding: 2px 0 0 0; vertical-align: middle">
-    <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="%s" show_faces="false" width="300" font=""></fb:like>
+    <table style="width: %spx; border-width: 0px; border-spacing: 0px; "><tr><td style="width: 225px; height: 35px; padding: 2px 0 0 0; vertical-align: middle; overflow: hidden">
+    <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="%s" show_faces="false" width="225" font=""></fb:like>
     </td><td style="text-align: right; vertical-align: middle">
     <!-- AddThis Button BEGIN -->
     <a class="addthis_button" addthis:url="%s" href="http://www.addthis.com/bookmark.php?v=250&amp;pubid=ra-4daa05c11b704dcf"><img src="http://s7.addthis.com/static/btn/sm-share-en.gif" width="83" height="16" alt="Bookmark and Share" style="border:0"/></a>
