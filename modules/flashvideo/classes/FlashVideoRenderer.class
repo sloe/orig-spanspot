@@ -62,30 +62,57 @@ class FlashVideoRenderer extends GalleryRenderer {
   if ($ret) {
       return null;
   }
+  $scripts = '
+<style>
+  .tooltip {
+	display:none;
+	background:transparent url(/tools/img/tooltip/black_arrow.png);
+  font-family:arial,helvetica,verdana,sans-serif;
+	font-size:12px;
+	height:70px;
+	width:160px;
+	padding:25px;
+	color:#fff;	
+}
+</style>
+<script src="http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js"></script>
+<script>
+$(document).ready(function() {
+  $("#playerchoice a[title]").tooltip();
+  $("#playerchoice div[title]").tooltip();
+});
+</script>';
 
   $urlGenerator =& $gallery->getUrlGenerator();
   $currentUrl = $urlGenerator->getCurrentUrl();
+
 	$shareUrl = $urlGenerator->generateUrl(
         array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'share' => '1'),
         array('forceFullUrl' => true, 'forceDirect' => true));
-	
-  $playerTypes = array('moyea' => 'Moyea', 'flowplayer' => 'FlowPlayer');
-  $playerChooser = '<table style="border-width: 0px; border-spacing: 0px"><tr style="height: 30px; vertical-align: middle"><td>Choose player:</td>';
-   
-  foreach ($playerTypes as $key => $name) {
+  
+  $playerTypes = array(
+    'moyea' => array('Moyea', 'This is the standard player with a good range of features, and is paid for so no logos.'),
+    'flowplayer' => array('FlowPlayer', 'Simple but capable.  Pseudo-streaming - you can click on the timeline and the video will load from there.  Also click-image-to-pause.'),
+    'flvplayer' => array('FLVPlayer', 'A nice simple player, but the logo\'s a bit over the top.  Good blur effect at the end.')
+  );
+  $playerChooser = '
+    <div id="playerchoice">
+    <table style="border-width: 0px; border-spacing: 0px"><tr style="height: 30px; vertical-align: middle"><td>Choose player:</td>';
+
+  foreach ($playerTypes as $key => $info) {
     $playerChooser .= '<td>';
     if ($player == $key) {
-      $playerChooser .= sprintf('<b>%s</b>', $name);   
+      $playerChooser .= sprintf('<div title="%s"><b>%s</b></div>', $info[1], $info[0]);   
     } else {
       $selfUrl = $urlGenerator->generateUrl(
         array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'playerSet' => $key),
         array('forceFullUrl' => true, 'forceDirect' => true));
-      $playerChooser .= sprintf('<a href="%s">%s</a>',
-        $selfUrl, $name);
+      $playerChooser .= sprintf('<a href="%s" title="%s">%s</a>',
+        $selfUrl, $info[1], $info[0]);
     }
     $playerChooser .= '</td>';
   }
-  $playerChooser .= '</tr></table>';
+  $playerChooser .= '</tr></table></div>';
 
   $src = $urlGenerator->generateUrl(
     array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
@@ -194,13 +221,13 @@ class FlashVideoRenderer extends GalleryRenderer {
      * unzip in the flashvideo/lib directory and uncomment the lines below:
      */
     $playerUrl = $urlGenerator->generateUrl(
-      array('href' => 'modules/flashvideo/lib/FlvPlayer-new.swf'),
+      array('href' => 'modules/flashvideo/lib/flvplayer/FlvPlayer.swf'),
       array('forceFullUrl' => true));
-    $skinUrl = $urlGenerator->generateUrl(
-      array('href' => 'modules/flashvideo/lib/skin'), array('forceFullUrl' => true));
     $flashVars = sprintf('flvpVideoSource=%s&autoPlay=true&autoRewind=false',
              urlencode($src));
+    $flashVars .= '&flvpFolderLocation:/modules/flashvideo/lib/flvplayer/'; 
     $flashVars .= '&flvpWidth='.$width.'&flvpHeight='.$height;
+    $flashVars .= '&flvpInitVolume:100&flvpTurnOnCorners:true';
   } else {
     $playerUrl = $urlGenerator->generateUrl(
     array('href' => 'modules/flashvideo/moyea/mwplayer.swf'),
@@ -226,7 +253,7 @@ class FlashVideoRenderer extends GalleryRenderer {
       $objHeight = $height+33;
   }
   
-  return  $playerChooser . sprintf(
+  return  $scripts . $playerChooser . sprintf(
     '<script type="text/javascript" src="%s"></script>
     <script type="text/javascript">
     // <![CDATA[
