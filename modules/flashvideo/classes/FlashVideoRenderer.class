@@ -89,16 +89,22 @@ $(document).ready(function() {
 	$shareUrl = $urlGenerator->generateUrl(
         array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'share' => '1'),
         array('forceFullUrl' => true, 'forceDirect' => true));
+  $shareUrl = str_replace('staging.', 'www.', $shareUrl);
+  
+  $playerFoooter='';
+  $replacer = '';
   
   $playerTypes = array(
     'moyea' => array('Moyea', 'This is the standard player with a good range of features, and is paid for so no logos.'),
     'flowplayer' => array('FlowPlayer', 'Simple but capable.  Pseudo-streaming - you can click on the timeline and the video will load from there.  Also click-image-to-pause.'),
     'flvplayer' => array('FLVPlayer', 'A nice simple player, but the logo\'s a bit over the top.  Good blur effect at the end.'),
-    'jwplayer' => array('JW Player', 'The biggie - can do everything.  Neat post-to-Facebook feature.')    
+    'jwplayer' => array('JW Player', 'The biggie - can do everything, but most features are switched off here.'),    
+    'flowplayerstream' => array('FlowPlayer Stream (extreme beta)', 'Flowplayer in trickplay mode, with multi-speed play.  So beta that it doesn\'t work.'),
   );
   $playerChooser = '
     <div id="playerchoice">
-    <table style="border-width: 0px; border-spacing: 0px"><tr style="height: 30px; vertical-align: middle"><td>Choose player:</td>';
+    <table style="border-width: 0px; border-spacing: 0px"><tr style="height: 30px; vertical-align: middle"><td>Choose player:</td>
+  ';
 
   foreach ($playerTypes as $key => $info) {
     $playerChooser .= '<td>';
@@ -204,23 +210,147 @@ $(document).ready(function() {
   
   if ($player == "flowplayer") {
     /*
-     * To use FlowPlayer ( http://flowplayer.sourceforge.net )
-     * place FlowPlayer.swf in the flashvideo/lib directory and uncomment the lines below:
+     * ***** FLOWPLAYER
      */    
     $playerUrl = $urlGenerator->generateUrl(
         array('href' => 'modules/flashvideo/lib/flowplayergpl/flowplayer-3.2.7.swf'),
         array('forceFullUrl' => true));
-    $pseudoUrl = $urlGenerator->generateUrl(
-        array('href' => 'modules/flashvideo/lib/flowplayergpl.pseudostreaming/flowplayer.pseudostreaming-3.2.7.swf'),
-        array('forceFullUrl' => true));
     $flashVars = sprintf("config={'plugins':{'pseudo':{'url':'%s'},'controls':{'url':'%s'}},'clip':{'provider':'pseudo','url':'%s'}}",
         'flowplayer.pseudostreaming-3.2.7.swf', 'flowplayer.controls-3.2.5.swf', urlencode($src));
+  } elseif ($player == "flowplayerstream") {
+    /*
+     * ***** FLOWPLAYER STREAM
+     */    
+  
+    /* Map the source appropritely for the stream server */
+    $src = $urlGenerator->generateUrl(
+    array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
+          'serialNumber' => $entity->getSerialNumber()),
+    array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false, 'norewrite' => true));
+    
+  
+    $scriptUrl = $urlGenerator->generateUrl(
+        array('href' => 'modules/flashvideo/lib/flowplayergpl/flowplayer-3.2.6.js'),
+        array('forceFullUrl' => true));
+    $playerUrl = $urlGenerator->generateUrl(
+        array('href' => 'modules/flashvideo/lib/flowplayergpl/flowplayer-3.2.7.swf'),
+        array('forceFullUrl' => true));
+        
+    list ($ret, $path) = $item->fetchPath();
+    
+    if (!$ret) {
+        $src = preg_replace('/^.*\/spanners\//', 'flv:', $path);
+    }
+    $replacer = sprintf("
+<a href=\"%s\"
+	style=\"display:block;width:%spx;height:%spx;background-image:url(%s)\"
+	id=\"trickplay\">
+</a>  
+    
+  <script src=\"%s\"></script>
+  <script language=\"JavaScript\">
+  flowplayer(\"trickplay\", \"%s\", {
+    'play':{
+      'opacity':1.0
+    },
+    'log':{
+      'level': 'info',
+      'filter': '*'
+    },
+    'plugins':{
+      'slowmotion':{
+        'url':'flowplayer.slowmotion-3.2.1.swf'
+      },
+      'rtmp':{
+        'url':'flowplayer.rtmp-3.2.3.swf',
+        'netConnectionUrl':'rtmp://rt0.spannerspotter.com/fastplay'
+      },		// add a content plugin to show speed information (this is optional)
+      'controls':{
+        'time':true,
+        'stop':true,
+        'fastBackward':false,
+        'fastForward':false,
+        'slowBackward':false,
+        'slowForward':false,
+        'url':'flowplayer.controls-3.2.5.swf'
+      }
+    },
+    'clip':{
+      'provider':'rtmp',
+      'autoPlay':false,
+      'autoRewind':true,
+      'scaling':'orig',
+      onFinish:function(){this.getPlugin(\"play\").css({opacity:0})}
+    }
+  });
+  </script>
+    ",
+    $src,
+    $width,
+    $height,
+    $thumbUrl,
+    $scriptUrl,
+    $playerUrl);
+    
+    $playerFooter=sprintf('
+  <script language="JavaScript">
+$f().onLoad(function() {
+	$("#actions").css("opacity", 1);
+    $("#actions button").removeAttr("disabled");
+});
+
+$f().onUnload(function() {
+	$("#actions").css("opacity", 0.5);
+    $("#actions button").attr("disabled", true);
+});
+
+
+var actions = {
+	backward: function(speed) {
+		$f().resume();
+		$f().getPlugin(\'slowmotion\').backward(speed, 30);
+	},
+	forward: function(speed) {
+		$f().resume();
+		$f().getPlugin(\'slowmotion\').forward(speed, 30);
+	},
+	normal: function() {
+		$f().resume();
+		$f().getPlugin(\'slowmotion\').normal();
+	},
+	pause: function() {
+		$f().toggle();
+	},
+  step: function(step) {
+    $f().seek($f().getTime()+step);
+  }
+}
+</script>
+
+<div id="actions" style="text-align:center;opacity:0.5;width:%spx;margin-top: 10px;">',
+ $width < 640 ? 640 : $width);
+ 
+
+  $buttons = '';
+  $buttons .= '<button type="button" class="custom low small" disabled onClick="actions.step(-1)">-1s</button>';
+  foreach (array(100, 75, 50, 25, 10, 8, 6, 4, 2) as $speed) {
+    $buttons .= sprintf('<button type="button" class="custom low small" disabled onClick="actions.backward(%s)">-%s%%</button>',
+      $speed/25.0, $speed);
+  }
+  $buttons .= '<button type="button" class="custom low small" disabled onClick="actions.pause()">Pause</button>';
+  foreach (array(2, 4, 6, 8, 10, 25, 50, 75, 100) as $speed) {
+    $buttons .= sprintf('<button type="button" class="custom low small" disabled onClick="actions.forward(%s)">%s%%</button>',
+      $speed/25.0, $speed);
+  }
+  $buttons .= '<button type="button" class="custom low small" disabled onClick="actions.step(3)">+1s</button>';
+  $playerFooter .= $buttons;
+  $playerFooter .= '</div>';
+  
+    
   } elseif ($player == "flvplayer") {
     /*
-     * To use FLVPlayer ( http://www.peldi.com/fmswiki/index.php?title=FLVPlayer )
-     * get this version of the player: http://gallery.menalto.com/files/.zip
-     * unzip in the flashvideo/lib directory and uncomment the lines below:
-     */
+     * ***** FLVPLAYER
+     */    
     $playerUrl = $urlGenerator->generateUrl(
       array('href' => 'modules/flashvideo/lib/flvplayer/FlvPlayer.swf'),
       array('forceFullUrl' => true));
@@ -230,6 +360,9 @@ $(document).ready(function() {
     $flashVars .= '&flvpWidth='.$width.'&flvpHeight='.$height;
     $flashVars .= '&flvpInitVolume:100&flvpTurnOnCorners:true';
   } elseif ($player == "jwplayer") {
+    /*
+     * ***** JWPLAYER
+     */    
     $playerUrl = $urlGenerator->generateUrl(
       array('href' => 'modules/flashvideo/lib/jwplayer/player.swf'),
       array('forceFullUrl' => true));
@@ -237,8 +370,11 @@ $(document).ready(function() {
              urlencode($src), urlencode($thumbUrl));
     $flashVars .= '&width='.$width.'&height='.$height;
     $flashVars .= '&stretching=none';
-    $flashVars .= sprintf('&plugins=fbit-1&fbit.link=%s', urlencode($shareUrl));
+    /* $flashVars .= sprintf('&plugins=fbit-1&fbit.link=%s', urlencode($shareUrl)); */
   } else {
+    /*
+     * ***** MOYEA PLAYER
+     */    
     $playerUrl = $urlGenerator->generateUrl(
     array('href' => 'modules/flashvideo/moyea/mwplayer.swf'),
     array('forceFullUrl' => true));
@@ -263,32 +399,45 @@ $(document).ready(function() {
       $objHeight = $height+33;
   }
   
-  return  $scripts . $playerChooser . sprintf(
-    '<script type="text/javascript" src="%s"></script>
-    <script type="text/javascript">
-    // <![CDATA[
-    function divResize(id, nw, nh) {
-      var obj = document.getElementById(id);
-      obj.style.width = nw + "px";
-      obj.style.height = nh + "px";
-    }
-    // ]]>
-    </script>
-    <div id="flashvideo" style="align:left;width:%s;height:%s">
-    <div id="flvContent" style="width: 100%%; height: 100%%">%s</div>
-    </div>
-    <script type="text/javascript">
-    // <![CDATA[
-    var so = new SWFObject("%s", "%s", "%s", "%s", "9.0.115.0", "ffffff");
-    so.addParam("allowScriptAccess","always");
-    so.addParam("flashVars","%s");
-    so.useExpressInstall("%s");
-    so.addParam("wmode","transparent");
-    so.addParam("allowFullScreen","true");
-    so.write("flvContent");
-    // ]]>
-    </script>
-    <table style="width: %spx; border-width: 0px; border-spacing: 0px; "><tr><td style="width: 225px; height: 35px; padding: 2px 0 0 0; vertical-align: middle; overflow: hidden">
+  if ($replacer == '') {
+    $replacer = sprintf('<script type="text/javascript" src="%s"></script>
+      <script type="text/javascript">
+      // <![CDATA[
+      function divResize(id, nw, nh) {
+        var obj = document.getElementById(id);
+        obj.style.width = nw + "px";
+        obj.style.height = nh + "px";
+      }
+      // ]]>
+      </script>
+      <div id="flashvideo" style="align:left;width:%s;height:%s">
+      <div id="flvContent" style="width: 100%%; height: 100%%">%s</div>
+      </div>
+      <script type="text/javascript">
+      // <![CDATA[
+      var so = new SWFObject("%s", "%s", "%s", "%s", "9.0.115.0", "ffffff");
+      so.addParam("allowScriptAccess","always");
+      so.addParam("flashVars","%s");
+      so.useExpressInstall("%s");
+      so.addParam("wmode","transparent");
+      so.addParam("allowFullScreen","true");
+      so.write("flvContent");
+      // ]]>
+      </script>',
+      $SWFObjectUrl,
+      $objWidth,
+      $objHeight,
+      $jsWarning,
+      $playerUrl,
+      !empty($params['id']) ? $params['id'] : 'movie',
+      $objWidth,
+      $objHeight,
+      $flashVars,
+      $expressInstallUrl
+    );
+  }
+  $shareFooter = sprintf(
+    '<table style="width: %spx; border-width: 0px; border-spacing: 0px; "><tr><td style="width: 225px; height: 35px; padding: 2px 0 0 0; vertical-align: middle; overflow: hidden">
     <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="%s" show_faces="false" width="225" font=""></fb:like>
     </td><td style="text-align: right; vertical-align: middle">
     <!-- AddThis Button BEGIN -->
@@ -299,8 +448,12 @@ $(document).ready(function() {
     </td><td style="width: 70px; text-align: right; vertical-align: middle">
     <a href="%s">Download</a>
     </td></tr></table>',
-    $SWFObjectUrl, $objWidth, $objHeight, $jsWarning, $playerUrl,!empty($params['id']) ? $params['id'] : 'movie',
-                  $objWidth, $objHeight, $flashVars, $expressInstallUrl, $objWidth, urlencode($shareUrl), urlencode($shareUrl), $src);
-    }
+    $objWidth,
+    urlencode($shareUrl),
+    urlencode($shareUrl),
+    $src
+  );
+  return  $scripts . $playerChooser . $replacer . $playerFooter . $shareFooter;
+  }
 }
 ?>

@@ -113,7 +113,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @see GalleryUrlGenerator::generateUrl
      */
     function generateUrl($params=array(), $options=array()) {
-	if ($this->_error || !empty($params['href'])) {
+	if ($this->_error || !empty($params['href']) || isset($options['norewrite'])) {
 	    return parent::generateUrl($params, $options);
 	}
 
