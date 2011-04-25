@@ -91,16 +91,33 @@ $(document).ready(function() {
         array('forceFullUrl' => true, 'forceDirect' => true));
   $shareUrl = str_replace('staging.', 'www.', $shareUrl);
   
-  $playerFoooter='';
+  $playerFooter='';
   $replacer = '';
   
+  list ($ret, $filePath) = $item->fetchPath();
+  $hasFilePath = !($ret);
+  $streamPath = '';
+  $hasStreamPath = true;
+  if ($hasFilePath)
+  {
+    $streamPath = str_replace('albums', 'streamalbums', $filePath);
+    $hasStreamPath = is_file($streamPath);
+  }
+  
   $playerTypes = array(
-    'moyea' => array('Moyea', 'This is the original player and supports .'),
-    'flowplayer' => array('FlowPlayer', 'This is a pseudo-streaming player.  You can click the timeline and the video will reload from there.'),
-    'flvplayer' => array('FLVPlayer', 'Notable for the cool blur effect at the end.'),
-    'jwplayer' => array('JW Player', 'The biggie - can do everything, but most features are switched off here.'),    
-    'flowplayerstream' => array('FlowPlayer Stream (experimental)', 'Experimental speed-controlled play, using real-time streaming.'),
-  );
+    'moyea' => array('Standard', 'This is the original player.'));
+  
+  if ($hasStreamPath) {
+    $playerTypes += array(
+      'flowplayerstream' => array('Variable speed (experimental)', 'Experimental speed-controlled play, using real-time streaming.')
+    );
+  }
+  if ($gallery->getConfig('spanspot.staging')) {
+     $playerTypes += array(
+      'flowplayer' => array('FlowPlayer', 'This is a pseudo-streaming player.  You can click the timeline and the video will reload from there.'),
+      'flvplayer' => array('FLVPlayer', 'Notable for the cool blur effect at the end.'),
+      'jwplayer' => array('JW Player', 'The biggie - can do everything, but most features are switched off here.'));
+  }
   $playerChooser = '
 <div id="playerchoice">
 <style type="text/css">
@@ -126,20 +143,24 @@ $(document).ready(function() {
   }
   $playerChooser .= '</tr></table></div>';
 
+  if ($player == 'flowplayerstream'&& !$hasStreamPath) {
+    $playerChooser .= '<font style="color:red">Multi-speed streaming is not available for this footage.</font><br>';
+    $player = '';
+  }  
+
   $src = $urlGenerator->generateUrl(
     array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
           'serialNumber' => $entity->getSerialNumber()),
     array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
+  $downloadSrc = $src;
   list ($width, $height, $title) =
     array($entity->getWidth(), $entity->getHeight(), $item->getTitle());
-  if(	$entity->getWidth() == 0 && $entity->getHeight() == 0){
+  if(	$entity->getWidth() == 0 && $entity->getHeight() == 0) {
     $width = 480;
     $height = 160;
   }
   GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
   $title = smarty_modifier_markup($title, 'strip');
-
-
 
   /* Default player: G2flv.swf */
   /* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
@@ -300,7 +321,7 @@ $(document).ready(function() {
     $scriptUrl,
     $playerUrl);
     
-    $playerFooter = '
+    $playerFooter .= '
   <script language="JavaScript">
 $f().onLoad(function() {
 	$("#actions").css("opacity", 1);
@@ -364,7 +385,7 @@ var actions = {
   
   $playerFooter .= '</td><td style="width:120px;text-align:center; vertical-align: middle;">'.sprintf('
   <div id="audio" style="display:block;width:120px;height:20px; vertical-align: middle;"
-	href="%s"></div>High-speed audio supplement
+	href="%s"></div>High-speed playback audio augmentation
 <script>
 // install flowplayer into container
 $f("audio", "%s", {
@@ -396,10 +417,9 @@ $f("audio", "%s", {
   $playerFooter .= '</td></tr></table>';
   $playerFooter .= '
 <br><strong>This is an experimental service.</strong>  Known issues are:
-<ul><li>Bandwidth requirements increases with playback speed, and can reach 5Mbps above 100%.
-<li>This service can only support a limited number of simultaneous users; typically 10.
-<li>The player may fail to initialise with <strong>Error #1069</strong>.  This is usually resolved by reloading the page a few times.
-</ul><br>';
+<br>&nbsp;&nbsp;1. The player may fail to initialise with <strong>Error #1069</strong>.  This is usually resolved by reloading the page a few times.<br>&nbsp;&nbsp;2. This service can only support a limited number of simultaneous users.
+
+<br><br>';
   } elseif ($player == "flvplayer") {
     /*
      * ***** FLVPLAYER
@@ -504,7 +524,7 @@ $f("audio", "%s", {
     $objWidth,
     urlencode($shareUrl),
     urlencode($shareUrl),
-    $src
+    $downloadSrc
   );
   return  $scripts . $playerChooser . $replacer . $playerFooter . $shareFooter;
   }
