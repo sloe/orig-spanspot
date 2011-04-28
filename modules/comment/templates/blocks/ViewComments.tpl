@@ -8,7 +8,7 @@
 {if empty($show)} {assign var=show value=3} {/if}
 {g->callback type="comment.LoadComments" itemId=$item.id show=$show}
 
-<table><tr><td style="vertical-align:top"><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=126757490732808&amp;xfbml=1"></script><fb:live-stream event_app_id="126757490732808" width="400" height="500" xid="" always_post_to_friends="false"></fb:live-stream>
+<table><tr><td style="vertical-align:top"><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=126757490732808&amp;xfbml=1"></script><fb:live-stream event_app_id="126757490732808" width="400" height="500" xid="" via_url="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`" forceFullUrl=true}" always_post_to_friends="false"></fb:live-stream>
 </td><td style="vertical-align:top">
 {if !empty($block.comment.LoadComments.comments)}
 <div class="{$class}">
