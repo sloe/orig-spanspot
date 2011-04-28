@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		7A930A9B136A0F57005DDD64 /* index.php */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.php; name = index.php; path = ../../index.php; sourceTree = SOURCE_ROOT; };
 		7A93CF14135B9667001070E6 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		7A93CF15135B9667001070E6 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		7A93CF16135B9667001070E6 /* flowplayer-3.2.7.swf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "flowplayer-3.2.7.swf"; sourceTree = "<group>"; };
@@ -2376,6 +2377,7 @@
 		08FB7794FE84155DC02AAC07 /* spanspot */ = {
 			isa = PBXGroup;
 			children = (
+				7A930A9B136A0F57005DDD64 /* index.php */,
 				7ACD371A1359FFC500F4F315 /* dev */,
 				7ACD374E135A077400F4F315 /* lib */,
 				7ACD2EE11359FD5100F4F315 /* modules */,

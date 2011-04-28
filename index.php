@@ -32,11 +32,16 @@ require_once(dirname(__FILE__) . '/modules/core/classes/GalleryCoreApi.class');
 
 /* The REQUEST_URI can either be /path/index.php or just /path/. Get rid of index.php.* */
 $path = GalleryUrlGenerator::getCurrentRequestUri();
-if (preg_match('|^(/(?:[^?#/]+/)*)(.*)|', $path, $matches)) {
-    $path = $matches[1] . GALLERY_MAIN_PHP;
-    if (!empty($matches[2]) && ($pos = strpos($matches[2], '?')) !== false) {
+
+if ($path == '/') {
+  /* Alter front page to current year's album */
+  $path = '/v/2010/';
+}
+elseif (preg_match('|^(/(?:[^?#/]+/)*)(.*)|', $path, $matches)) {
+  $path = $matches[1] . GALLERY_MAIN_PHP;
+  if (!empty($matches[2]) && ($pos = strpos($matches[2], '?')) !== false) {
 	$path .= substr($matches[2], $pos);
-    }
+  }
 }
 
 $configBaseUri = @$gallery->getConfig('baseUri');
