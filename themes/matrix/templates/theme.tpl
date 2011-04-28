@@ -37,7 +37,7 @@ cellPadding="0" border="0">
 				<td rowspan="2" width="132"><a
 href="/"><img src="/local/images/eye-left.jpg"></a></td>
 				<td width="668" height="142">
-<a href="/"><img src="/local/images/spanner-banner-text.jpg"></a></td>
+<a href="/main.php"><img src="/local/images/spanner-banner-text.jpg"></a></td>
 			</tr>
 			<tr>
 				<td valign="top" align="center">Your ultimate
