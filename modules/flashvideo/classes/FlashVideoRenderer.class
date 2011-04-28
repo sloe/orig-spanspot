@@ -417,8 +417,9 @@ $f("audio", "%s", {
   $playerFooter .= '</td></tr></table>';
   $playerFooter .= '
 <br><strong>This is an experimental service.</strong>  Known issues are:
-<br>&nbsp;&nbsp;1. The player may fail to initialise with <strong>Error #1069</strong>.  This is usually resolved by reloading the page a few times.<br>&nbsp;&nbsp;2. This service can only support a limited number of simultaneous users.
-
+<br>&nbsp;&nbsp;1. The player may fail to initialise with <strong>Error #1069</strong>.  This can usually be fixed by reloading the page a few times.
+<br>&nbsp;&nbsp;2. The server can only support a limited number of simultaneous users.
+<br>&nbsp;&nbsp;3. It won\'t work from behind corporate firewalls, unless port 1935 is open.
 <br><br>';
   } elseif ($player == "flvplayer") {
     /*
