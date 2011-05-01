@@ -87,19 +87,19 @@ class RatingCallbacks {
         $itemTitle = $item->getTitle();
 		$entryName = str_replace('First and', '', $itemTitle);
         
-        if (preg_match('[ MW]1x', $entryName)) {
+        if (preg_match('/[ MW]1x/', $entryName)) {
           $ratingSet = array('Sculler');
         }
-        elseif (preg_match('[ MW](2x|2-)', $entryName)) {
+        elseif (preg_match('/[ MW](2x|2-)/', $entryName)) {
           $ratingSet = array('Bow', 'Stroke');
         }
-        elseif (preg_match('[ MW]2\+', $entryName)) {
+        elseif (preg_match('/[ MW]2\+/', $entryName)) {
           $ratingSet = array('Bow', 'Stroke', 'Cox');
         }
-        elseif (preg_match('[ MW](4x\+|4X\+|4\+)', $entryName)) {
+        elseif (preg_match('/[ MW](4x\+|4X\+|4\+)/', $entryName)) {
           $ratingSet = array('Bow', '2', '3', 'Stroke', 'Cox');
         }
-        elseif (preg_match('[ MW](4x|4X|4-)', $entryName)) {
+        elseif (preg_match('/[ MW](4x|4X|4-)/', $entryName)) {
           $ratingSet = array('Bow', '2', '3', 'Stroke');
         }
         else {
