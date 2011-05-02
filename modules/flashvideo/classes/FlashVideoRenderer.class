@@ -206,6 +206,7 @@ $(document).ready(function() {
   if ($hasHdPath && $definition == 'hd') {
     /* FIXME: Tweak $src to point at the HD file */
     $src = str_replace('/vol/www/spanspot_staging/', 'http://www.spannerspotter.com/', $hdPath);
+    $src = str_replace('/vol/www/spanspot/', 'http://www.spannerspotter.com/', $hdPath);
     $width = 1280;
     $height = 720;
     /* $playerFooter .= 'If HD playback is jumpy, try downloading the file to a Windows PC and play with a Standalone Flash Player<br>'; */
