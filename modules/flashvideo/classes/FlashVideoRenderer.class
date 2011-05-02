@@ -46,12 +46,20 @@ class FlashVideoRenderer extends GalleryRenderer {
   $session =& $gallery->getSession();
 
   $playerSet = GalleryUtilities::getRequestVariables('playerSet');
+  $definitionSet = GalleryUtilities::getRequestVariables('definitionSet');
 
   if (isset($playerSet) && $playerSet != '') {
     $session->put('spanspot.player', $playerSet);
   }
   $player = $session->get('spanspot.player');
-        
+  if ($player == '') $player = 'moyea';
+  
+  if (isset($definitionSet) && $definitionSet != '') {
+    $session->put('spanspot.definition', $definitionSet);
+  }
+  $definition = $session->get('spanspot.definition');
+  if ($definition == '') $definition = 'sd';
+   
   $fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
 
   if ($format != 'HTML' || ($entity->getMimeType() != 'video/x-flv' && $entity->getMimeType() != 'video/mp4')) {
@@ -97,19 +105,26 @@ $(document).ready(function() {
   list ($ret, $filePath) = $item->fetchPath();
   $hasFilePath = !($ret);
   $streamPath = '';
-  $hasStreamPath = true;
+  $hasStreamPath = $hasFilePath;
+  $hasHdPath = $hasFilePath;
+  
   if ($hasFilePath)
   {
     $streamPath = str_replace('albums', 'streamalbums', $filePath);
     $hasStreamPath = is_file($streamPath);
+    
+    $hdPath = str_replace('.flv', '_HD720.flv', $filePath);
+    $hasHdPath = is_file($hdPath);
   }
   
   $playerTypes = array(
-    'moyea' => array('Standard', 'This is the original player.'));
+    'moyea' => array('Standard', 'This is the original player.'),
+    'flowplayer' => array('FlowPlayer', 'This player hides the control bar and is set to auto-play.')
+  );
   
   if ($hasStreamPath) {
     $playerTypes += array(
-      'flowplayerstream' => array('Variable speed (experimental)', 'Experimental speed-controlled play, using real-time streaming.')
+      'flowplayerstream' => array('Spannalyzer (experimental)', 'Experimental speed-controlled play, using real-time streaming.')
     );
   }
   if ($gallery->getConfig('spanspot.staging')) {
@@ -118,7 +133,18 @@ $(document).ready(function() {
       'flvplayer' => array('FLVPlayer', 'Notable for the cool blur effect at the end.'),
       'jwplayer' => array('JW Player', 'The biggie - can do everything, but most features are switched off here.'));
   }
-  $playerChooser = '
+  
+  $definitionTypes = array(
+    'sd' => array('Standard', 'Standard definition, typically 640x360 pixels.')
+  );
+  
+  if ($hasHdPath) {
+    $definitionTypes += array(
+      'hd' => array('High Definition', 'If you have Broadband of the Gods and a fast PC, this is the way to go.')
+    );
+  }
+  
+  $choosers = '
 <div id="playerchoice">
 <style type="text/css">
   table.chooser-table table { border-width: 0px; border-spacing: 0px; padding: 0; }
@@ -129,32 +155,64 @@ $(document).ready(function() {
   ';
 
   foreach ($playerTypes as $key => $info) {
-    $playerChooser .= '<td>';
+    $choosers .= '<td>';
     if ($player == $key) {
-      $playerChooser .= sprintf('<div title="%s"><b>%s</b></div>', $info[1], $info[0]);   
+      $choosers .= sprintf('<div title="%s"><b>%s</b></div>', $info[1], $info[0]);   
     } else {
       $selfUrl = $urlGenerator->generateUrl(
         array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'playerSet' => $key),
         array('forceFullUrl' => true, 'forceDirect' => true));
-      $playerChooser .= sprintf('<a href="%s" title="%s">%s</a>',
+      $choosers .= sprintf('<a href="%s" title="%s">%s</a>',
         $selfUrl, $info[1], $info[0]);
     }
-    $playerChooser .= '</td>';
+    $choosers .= '</td>';
   }
-  $playerChooser .= '</tr></table></div>';
+  
+  $choosers .= '<td>Size:</td>';
+  foreach ($definitionTypes as $key => $info) {
+    $choosers .= '<td style="text-align: right">';
+    if ($definition == $key) {
+      $choosers .= sprintf('<div title="%s"><b>%s</b></div>', $info[1], $info[0]);   
+    } else {
+      $selfUrl = $urlGenerator->generateUrl(
+        array('view' => 'core.ShowItem', 'itemId' => $entity->getId(), 'definitionSet' => $key),
+        array('forceFullUrl' => true, 'forceDirect' => true));
+      $choosers .= sprintf('<a href="%s" title="%s">%s</a>',
+        $selfUrl, $info[1], $info[0]);
+    }
+    $choosers .= '</td>';
+  }
+  
+  $choosers .= '</tr></table></div>';
 
-  if ($player == 'flowplayerstream'&& !$hasStreamPath) {
-    $playerChooser .= '<font style="color:red">Multi-speed streaming is not available for this footage.</font><br>';
+  if ($player == 'flowplayerstream' && !$hasStreamPath) {
+    $choosers .= '<font style="color:blue">Spannalyzer is not available for this footage.</font>';
     $player = '';
-  }  
+  }
+
+  if ($definition == 'hd' && !$hasHdPath) {
+    $choosers .= '<font style="color:blue">High definition is not available for this footage.</font><br>';
+    $definition = 'sd';
+  }
 
   $src = $urlGenerator->generateUrl(
     array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
           'serialNumber' => $entity->getSerialNumber()),
     array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
-  $downloadSrc = $src;
+
   list ($width, $height, $title) =
     array($entity->getWidth(), $entity->getHeight(), $item->getTitle());
+    
+  if ($hasHdPath && $definition == 'hd') {
+    /* FIXME: Tweak $src to point at the HD file */
+    $src = str_replace('/vol/www/spanspot_staging/', 'http://www.spannerspotter.com/', $hdPath);
+    $width = 1280;
+    $height = 720;
+    /* $playerFooter .= 'If HD playback is jumpy, try downloading the file to a Windows PC and play with a Standalone Flash Player<br>'; */
+  }
+    
+  $downloadSrc = $src;
+
   if(	$entity->getWidth() == 0 && $entity->getHeight() == 0) {
     $width = 480;
     $height = 160;
@@ -527,7 +585,7 @@ $f("audio", "%s", {
     urlencode($shareUrl),
     $downloadSrc
   );
-  return  $scripts . $playerChooser . $replacer . $playerFooter . $shareFooter;
+  return  $scripts . $choosers . $replacer . $playerFooter . $shareFooter;
   }
 }
 ?>
