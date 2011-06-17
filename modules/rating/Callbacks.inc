@@ -126,6 +126,9 @@ class RatingCallbacks {
        if (substr_count($entryName, '-flag-') == 1) {
             $ratingNames[] = 'Flag provider';
        }
+       if ($itemId == '9132') {
+         $ratingNames []= 'The Start Marshall';
+       }
 
 		$RatingDataElem = array();
 		for ($i = 0; $i < count($ratingNames); $i++) {

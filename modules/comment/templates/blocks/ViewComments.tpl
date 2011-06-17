@@ -7,8 +7,11 @@
 {if empty($item)} {assign var=item value=$theme.item} {/if}
 {if empty($show)} {assign var=show value=3} {/if}
 {g->callback type="comment.LoadComments" itemId=$item.id show=$show}
+<meta property="fb:app_id" content="126757490732808">
+<table><tr><td style="vertical-align:top">
 
-<table><tr><td style="vertical-align:top"><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=126757490732808&amp;xfbml=1"></script><fb:live-stream event_app_id="126757490732808" width="400" height="500" xid="" via_url="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`" forceFullUrl=true}" always_post_to_friends="false"></fb:live-stream>
+<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:comments href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`" forceFullUrl=true}" num_posts="20" width="400"></fb:comments>
+
 </td><td style="vertical-align:top">
 {if !empty($block.comment.LoadComments.comments)}
 <div class="{$class}">
