@@ -196,7 +196,7 @@ $(document).ready(function() {
   $choosers .= '</tr></table></div>';
 
   if ($player == 'flowplayerstream' && !$hasStreamPath) {
-    $choosers .= '<font style="color:blue">Spannalyzer is not available for this footage.</font>';
+    $choosers .= '<font style="color:blue">Spanalyzer is not available for this footage.</font>';
     $player = '';
   }
 
@@ -223,14 +223,14 @@ $(document).ready(function() {
     
   if ($hasSlowMoPath && $footage == 'slowmo') {
     /* FIXME: Tweak $src to point at the slow motion file */
-    $src = str_replace('/vol/www/spanspot_staging/', 'http://www.spannerspotter.com/', $slowMoPath);
-    $src = str_replace('/vol/www/spanspot/', 'http://www.spannerspotter.com/', $src);
+    $src = str_replace('/store/www/spanspot_staging/', 'http://www.spannerspotter.com/', $slowMoPath);
+    $src = str_replace('/store/www/spanspot/', 'http://www.spannerspotter.com/', $src);
     $width = 1280;
     $height = 720;
   } elseif ($hasHdPath && $footage == 'hd') {
     /* FIXME: Tweak $src to point at the HD file */
-    $src = str_replace('/vol/www/spanspot_staging/', 'http://www.spannerspotter.com/', $hdPath);
-    $src = str_replace('/vol/www/spanspot/', 'http://www.spannerspotter.com/', $src);
+    $src = str_replace('/store/www/spanspot_staging/', 'http://www.spannerspotter.com/', $hdPath);
+    $src = str_replace('/store/www/spanspot/', 'http://www.spannerspotter.com/', $src);
     $width = 1280;
     $height = 720;
     /* $playerFooter .= 'If HD playback is jumpy, try downloading the file to a Windows PC and play with a Standalone Flash Player<br>'; */
@@ -375,7 +375,7 @@ $(document).ready(function() {
       },
       'rtmp':{
         'url':'flowplayer.rtmp-3.2.3.swf',
-        'netConnectionUrl':'rtmp://rt0.spannerspotter.com/fastplay'
+        'netConnectionUrl':'rtmp://www.spannerspotter.com/fastplay'
       },		// add a content plugin to show speed information (this is optional)
       'controls':{
         'time':true,
