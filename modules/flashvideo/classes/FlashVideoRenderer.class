@@ -52,7 +52,7 @@ class FlashVideoRenderer extends GalleryRenderer {
     $session->put('spanspot.player', $playerSet);
   }
   $player = $session->get('spanspot.player');
-  if ($player == '') $player = 'moyea';
+  if ($player == '') $player = 'flowplayer';
   
   if (isset($footageSet) && $footageSet != '') {
     $session->put('spanspot.footage', $footageSet);
@@ -122,13 +122,13 @@ $(document).ready(function() {
   }
   
   $playerTypes = array(
-    'moyea' => array('Standard', 'This is the original player.'),
+    #'moyea' => array('Standard', 'This is the original player.'),
     'flowplayer' => array('FlowPlayer', 'This player hides the control bar and is set to auto-play.')
   );
   
   if ($hasStreamPath) {
     $playerTypes += array(
-      'flowplayerstream' => array('Spannalyzer (experimental)', 'Experimental speed-controlled play, using real-time streaming.')
+      'flowplayerstream' => array('Spanalyzer (experimental)', 'Experimental speed-controlled play, using real-time streaming.')
     );
   }
   if ($gallery->getConfig('spanspot.staging')) {
@@ -223,19 +223,21 @@ $(document).ready(function() {
     
   if ($hasSlowMoPath && $footage == 'slowmo') {
     /* FIXME: Tweak $src to point at the slow motion file */
-    $src = str_replace('/store/www/spanspot_staging/', 'http://www.spannerspotter.com/', $slowMoPath);
-    $src = str_replace('/store/www/spanspot/', 'http://www.spannerspotter.com/', $src);
+    $src = str_replace('/store/www/orig-spanspot/', 'http://cloudfront.spannerspotter.com/', $slowMoPath);
+    $src = str_replace('/store/www/spanspot/', 'http://cloudfront.spannerspotter.com/', $src);
     $width = 1280;
     $height = 720;
   } elseif ($hasHdPath && $footage == 'hd') {
     /* FIXME: Tweak $src to point at the HD file */
-    $src = str_replace('/store/www/spanspot_staging/', 'http://www.spannerspotter.com/', $hdPath);
-    $src = str_replace('/store/www/spanspot/', 'http://www.spannerspotter.com/', $src);
+    $src = str_replace('/store/www/orig-spanspot/', 'http://cloudfront.spannerspotter.com/', $hdPath);
+    $src = str_replace('/store/www/spanspot/', 'http://cloudfront.spannerspotter.com/', $src);
     $width = 1280;
     $height = 720;
     /* $playerFooter .= 'If HD playback is jumpy, try downloading the file to a Windows PC and play with a Standalone Flash Player<br>'; */
   }
-    
+  $src = str_replace('http://staging.spannerspotter.com/', 'http://cloudfront.spannerspotter.com/', $src);
+  $src = str_replace('http://www.spannerspotter.com/', 'http://cloudfront.spannerspotter.com/', $src);
+ 
   $downloadSrc = $src;
 
   if(	$entity->getWidth() == 0 && $entity->getHeight() == 0) {
@@ -324,8 +326,8 @@ $(document).ready(function() {
     $playerUrl = $urlGenerator->generateUrl(
         array('href' => 'modules/flashvideo/lib/flowplayergpl/flowplayer-3.2.7.swf'),
         array('forceFullUrl' => true));
-    $flashVars = sprintf("config={'plugins':{'pseudo':{'url':'%s'},'controls':{'url':'%s'}},'clip':{'provider':'pseudo','url':'%s'}}",
-        'flowplayer.pseudostreaming-3.2.7.swf', 'flowplayer.controls-3.2.5.swf', urlencode($src));
+    $flashVars = sprintf("config={'plugins':{'controls':{'url':'%s'}},'clip':{'url':'%s'}}",
+        'flowplayer.controls-3.2.5.swf', urlencode($src));
   } elseif ($player == "flowplayerstream") {
     /*
      * ***** FLOWPLAYER STREAM
