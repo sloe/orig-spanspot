@@ -35,7 +35,7 @@ $path = GalleryUrlGenerator::getCurrentRequestUri();
 
 if ($path == '/') {
   /* Alter front page to current year's album */
-  $path = '/v/2012/';
+  $path = '/v/2013/';
 }
 elseif (preg_match('|^(/(?:[^?#/]+/)*)(.*)|', $path, $matches)) {
   $path = $matches[1] . GALLERY_MAIN_PHP;

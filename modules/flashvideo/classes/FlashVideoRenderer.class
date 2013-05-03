@@ -220,7 +220,10 @@ $(document).ready(function() {
 
   list ($width, $height, $title) =
     array($entity->getWidth(), $entity->getHeight(), $item->getTitle());
-    
+  if ($width == 0) {
+    $width = 640;
+    $height = 360;
+  } 
   if ($hasSlowMoPath && $footage == 'slowmo') {
     /* FIXME: Tweak $src to point at the slow motion file */
     $src = str_replace('/store/www/orig-spanspot/', 'http://cloudfront.spannerspotter.com/', $slowMoPath);
